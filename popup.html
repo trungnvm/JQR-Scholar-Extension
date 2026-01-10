@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./css/style_popup.css">
+  <title>JQR Extension</title>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo-title">
+        <span class="logo">JQR</span>
+        <h1>Journals Quality</h1>
+      </div>
+      <button id="refresh" class="icon-btn" title="Refresh Page">
+        <img src="./icon/refresh.png" alt="Refresh">
+      </button>
+    </header>
+
+    <main>
+      <div class="card">
+        <div class="card-header">Features</div>
+
+        <div class="control-group">
+          <div class="control-label">
+            Enable JQR
+            <p>Show rankings globally</p>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="on" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            Impact Factor
+            <p>Show JCR/SJR metrics</p>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="impactFactor" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            Field Classification
+            <p>Automatic detection</p>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="fieldClassification" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            Auto Expand
+            <p>Show all by default</p>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="autoExpand" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">Journal Search</div>
+        <form id="joursearch_form" class="search-container">
+          <input type="text" id="journal_query" placeholder="Search for a journal..." autocomplete="off">
+          <button type="submit" class="search-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </button>
+        </form>
+      </div>
+    </main>
+
+    <footer>
+      <div class="footer-links">
+        <a href="#" id="settings_link">Advanced Settings</a>
+        <span class="version">v1.1.0</span>
+      </div>
+      <button id="settings_btn" class="icon-btn" title="Options">
+        <img src="./icon/settings.png" alt="Settings">
+      </button>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,233 @@
+"""
+Class Hierarchy and Architecture Diagram for journalListAggregator
+
+┌─────────────────────────────────────────────────────────────────┐
+│                    journalListAggregator.py                      │
+│                         (644 lines)                              │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│                        RateLimiter                               │
+├─────────────────────────────────────────────────────────────────┤
+│ - max_requests_per_second: int                                  │
+│ - min_interval: float                                            │
+│ - last_request_time: float                                       │
+├─────────────────────────────────────────────────────────────────┤
+│ + wait(): None                                                   │
+└─────────────────────────────────────────────────────────────────┘
+                              ▲
+                              │ uses
+            ┌─────────────────┴─────────────────┐
+            │                                   │
+┌───────────────────────────┐     ┌───────────────────────────┐
+│     OpenAlexAPI           │     │      CrossrefAPI          │
+├───────────────────────────┤     ├───────────────────────────┤
+│ - email: str              │     │ - email: str              │
+│ - rate_limiter: RateLimiter│    │ - rate_limiter: RateLimiter│
+│ - session: Session         │     │ - session: Session         │
+├───────────────────────────┤     ├───────────────────────────┤
+│ + fetch_journals_by_field()│    │ + fetch_journal_by_issn() │
+│ + fetch_all_journals()    │     │ + enrich_journal_data()   │
+│ - _make_request()         │     │ - _make_request()         │
+│ - _create_session()       │     │ - _create_session()       │
+│ - _extract_journal_data() │     │ - _extract_journal_data() │
+└───────────────────────────┘     └───────────────────────────┘
+            │                                   │
+            └─────────────────┬─────────────────┘
+                              │ used by
+                              ▼
+            ┌─────────────────────────────────────────┐
+            │         JournalAggregator               │
+            ├─────────────────────────────────────────┤
+            │ - openalex: OpenAlexAPI                 │
+            │ - crossref: CrossrefAPI                 │
+            │ - email: str                            │
+            ├─────────────────────────────────────────┤
+            │ + fetch_by_field()                      │
+            │ + fetch_all_journals()                  │
+            │ + deduplicate_journals()                │
+            │ + save_to_csv()                         │
+            │ - _extract_issns_from_df()              │
+            │ - _merge_dataframes()                   │
+            └─────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════
+                          DATA FLOW
+═══════════════════════════════════════════════════════════════════
+
+User Request
+    │
+    ▼
+JournalAggregator.fetch_by_field("machine learning")
+    │
+    ├──► OpenAlexAPI.fetch_journals_by_field()
+    │        │
+    │        ├──► Rate Limiter (wait if needed)
+    │        │
+    │        ├──► HTTP Request with cursor pagination
+    │        │        │
+    │        │        ▼
+    │        │    OpenAlex API Response
+    │        │
+    │        ├──► Extract journal data
+    │        │
+    │        └──► Return DataFrame
+    │
+    ├──► (Optional) CrossrefAPI.enrich_journal_data()
+    │        │
+    │        ├──► Rate Limiter (wait if needed)
+    │        │
+    │        ├──► HTTP Request for each ISSN
+    │        │        │
+    │        │        ▼
+    │        │    Crossref API Response
+    │        │
+    │        ├──► Extract journal data
+    │        │
+    │        └──► Return enriched DataFrame
+    │
+    ├──► Merge DataFrames (if enrichment used)
+    │
+    ├──► JournalAggregator.deduplicate_journals()
+    │        │
+    │        ├──► Group by primary ISSN
+    │        │
+    │        ├──► Aggregate duplicate fields
+    │        │
+    │        └──► Return deduplicated DataFrame
+    │
+    └──► JournalAggregator.save_to_csv()
+             │
+             └──► CSV File Output
+
+═══════════════════════════════════════════════════════════════════
+                      API ENDPOINTS
+═══════════════════════════════════════════════════════════════════
+
+OpenAlex:
+    Base URL: https://api.openalex.org
+    Endpoint: /venues
+    Parameters:
+        - filter: Display name search
+        - per-page: Results per page (max 200)
+        - cursor: Pagination cursor
+        - mailto: Email for polite pool
+
+Crossref:
+    Base URL: https://api.crossref.org
+    Endpoint: /journals/{issn}
+    Parameters:
+        - None (ISSN in URL)
+
+═══════════════════════════════════════════════════════════════════
+                    OUTPUT DATAFRAME SCHEMA
+═══════════════════════════════════════════════════════════════════
+
+┌────────────────┬──────────┬───────────────────────────────┐
+│ Column         │ Type     │ Source                        │
+├────────────────┼──────────┼───────────────────────────────┤
+│ name           │ str      │ OpenAlex, Crossref            │
+│ issn           │ str      │ OpenAlex, Crossref            │
+│ field          │ str      │ OpenAlex topics, Crossref subj│
+│ source         │ str      │ API identifier                │
+│ url            │ str      │ OpenAlex, Crossref            │
+│ publisher      │ str      │ OpenAlex, Crossref            │
+│ works_count    │ int      │ OpenAlex                      │
+│ cited_by_count │ int      │ OpenAlex                      │
+│ topics         │ str      │ OpenAlex                      │
+│ subjects       │ str      │ Crossref                      │
+└────────────────┴──────────┴───────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════
+                      ERROR HANDLING
+═══════════════════════════════════════════════════════════════════
+
+Network Errors
+    │
+    ├──► Retry Strategy (5 attempts)
+    │        │
+    │        ├──► Backoff Factor: 1 second
+    │        │
+    │        └──► Status codes: 429, 500, 502, 503, 504
+    │
+    └──► Logging (ERROR level)
+
+Rate Limiting
+    │
+    ├──► Pre-request wait (100ms for 10 req/s)
+    │
+    └──► Prevents 429 (Too Many Requests)
+
+Data Validation
+    │
+    ├──► Empty ISSN handling
+    │
+    ├──► Missing fields (use empty strings)
+    │
+    └──► Malformed JSON (return None)
+
+═══════════════════════════════════════════════════════════════════
+                   DEDUPLICATION ALGORITHM
+═══════════════════════════════════════════════════════════════════
+
+Input DataFrame
+    │
+    ├──► Split: Journals with ISSN / without ISSN
+    │
+    ├──► Extract primary ISSN (first in list)
+    │
+    ├──► Group by primary ISSN
+    │
+    ├──► Aggregate strategy:
+    │        │
+    │        ├──► name: first non-empty
+    │        ├──► issn: first non-empty
+    │        ├──► field: join all unique
+    │        ├──► source: join all unique
+    │        ├──► url: first non-empty
+    │        ├──► works_count: maximum
+    │        └──► cited_by_count: maximum
+    │
+    ├──► Combine with journals without ISSN
+    │
+    └──► Output deduplicated DataFrame
+
+═══════════════════════════════════════════════════════════════════
+                        FILE STRUCTURE
+═══════════════════════════════════════════════════════════════════
+
+scholar_extention_trung/utils/
+    │
+    ├── journalListAggregator.py (20K)
+    │   ├── RateLimiter class
+    │   ├── OpenAlexAPI class
+    │   ├── CrossrefAPI class
+    │   └── JournalAggregator class
+    │
+    ├── example_journal_aggregator.py (4.4K)
+    │   ├── example_fetch_by_field()
+    │   ├── example_fetch_all_journals()
+    │   ├── example_openalex_direct()
+    │   ├── example_crossref_enrichment()
+    │   ├── example_multiple_fields()
+    │   └── example_with_enrichment()
+    │
+    ├── test_journalListAggregator.py (10K)
+    │   ├── TestRateLimiter (3 tests)
+    │   ├── TestOpenAlexAPI (5 tests)
+    │   ├── TestCrossrefAPI (3 tests)
+    │   ├── TestJournalAggregator (9 tests)
+    │   └── TestIntegration (2 templates)
+    │
+    ├── README_journalListAggregator.md (7.9K)
+    │   ├── Features
+    │   ├── Installation
+    │   ├── Quick Start
+    │   ├── API Reference
+    │   ├── Examples
+    │   ├── Best Practices
+    │   └── Troubleshooting
+    │
+    └── IMPLEMENTATION_SUMMARY.md (8.3K)
+        └── Complete overview and specs
+"""

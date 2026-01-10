@@ -1,0 +1,288 @@
+"""
+Quick Reference Guide for Impact Factor Collector
+=================================================
+
+QUICK START
+-----------
+
+1. Basic usage:
+
+   from impactFactorCollector import ImpactFactorCollector
+
+   collector = ImpactFactorCollector(
+       sjr_csv_path="data/raw/scimagojr.csv",
+       email="your-email@example.com"
+   )
+
+   result = collector.get_impact_factor("0028-0836")
+   print(result['if_value'], result['quartile'])
+
+
+2. Batch processing:
+
+   issn_list = ["0028-0836", "0036-8075", "0140-6736"]
+   results = collector.batch_collect(issn_list)
+
+
+3. Export to JavaScript:
+
+   collector.export_to_js(results, "output/impact_factors.js")
+
+
+CLASS REFERENCE
+---------------
+
+ImpactFactorCollector
+    Main class - orchestrates data collection from multiple sources
+
+    Methods:
+    - get_impact_factor(issn) -> dict
+    - batch_collect(issn_list) -> dict
+    - export_to_js(data_dict, output_file)
+    - export_to_csv(data_dict, output_file)
+
+SJRDataLoader
+    Loads and parses ScimagoJR CSV data
+
+    Methods:
+    - load_sjr_csv(file_path) -> bool
+    - get_impact_metrics(issn) -> dict or None
+
+OpenAlexMetrics
+    Fetches citation metrics from OpenAlex API
+
+    Methods:
+    - get_citation_metrics(issn) -> dict or None
+    - get_2yr_mean_citedness(issn) -> float or None
+    - batch_get_metrics(issn_list) -> dict
+
+
+RETURN DATA STRUCTURE
+---------------------
+
+get_impact_factor() returns:
+{
+    'if_value': 14.3,           # Impact factor value
+    'year': 2023,               # Year of data
+    'source': 'sjr',            # 'sjr', 'openalex', or 'none'
+    'quartile': 'Q1',           # Journal quartile
+    'h_index': 1234,            # H-index
+    'alternative_metrics': {    # Additional source-specific metrics
+        'title': 'Nature',
+        'rank': 1,
+        'publisher': 'Nature Publishing Group',
+        ...
+    }
+}
+
+
+JAVASCRIPT OUTPUT FORMAT
+------------------------
+
+sfc.impactFactors = {
+  "0028-0836": {
+    "value": 14.3,
+    "year": 2023,
+    "source": "sjr",
+    "quartile": "Q1",
+    "h_index": 1234,
+    "title": "Nature"
+  }
+}
+
+
+DATA SOURCES
+------------
+
+Priority order:
+1. SJR (ScimagoJR) - Local CSV database
+   - Most comprehensive
+   - Includes quartile
+   - Includes detailed metrics
+
+2. OpenAlex API - Online service
+   - 2-year mean citedness (IF proxy)
+   - Real-time data
+   - H-index and citation counts
+
+3. None - No data available
+   - Returns null values
+
+
+ISSN FORMATS
+------------
+
+Supported formats (all normalized automatically):
+- 0028-0836 (with hyphen)
+- 00280836 (without hyphen)
+- 0028 0836 (with spaces)
+
+
+COMMON PATTERNS
+---------------
+
+Pattern 1: Query single journal
+    collector = ImpactFactorCollector(sjr_csv_path="data.csv")
+    data = collector.get_impact_factor("0028-0836")
+    print(f"IF: {data['if_value']}, Q: {data['quartile']}")
+
+Pattern 2: Process list from file
+    import pandas as pd
+    df = pd.read_csv("issns.csv")
+    results = collector.batch_collect(df['ISSN'].tolist())
+
+Pattern 3: Export for browser extension
+    results = collector.batch_collect(issn_list)
+    collector.export_to_js(results, "extension/data/impact_factors.js")
+
+Pattern 4: OpenAlex only (no SJR data)
+    collector = ImpactFactorCollector(email="test@example.com")
+    data = collector.get_impact_factor("0028-0836")
+
+Pattern 5: Detailed SJR metrics
+    loader = SJRDataLoader()
+    loader.load_sjr_csv("data.csv")
+    metrics = loader.get_impact_metrics("0028-0836")
+    print(metrics['total_docs'], metrics['total_cites'])
+
+
+PERFORMANCE TIPS
+----------------
+
+1. Use batch_collect() for multiple ISSNs (more efficient)
+2. Provide email for OpenAlex polite pool (faster rate limits)
+3. SJR lookup is O(1) using ISSN index
+4. OpenAlex is rate-limited to ~10 req/second
+5. Progress logging every 50-100 journals
+
+
+ERROR HANDLING
+--------------
+
+Common errors and solutions:
+
+1. FileNotFoundError
+   - Check SJR CSV path
+   - Use absolute path or correct relative path
+
+2. No data found (source='none')
+   - Verify ISSN format (8 digits)
+   - Check if journal exists in database
+   - Try alternative ISSN (print vs online)
+
+3. API rate limiting (429 error)
+   - Provide email parameter
+   - Reduce request rate
+   - Use retry logic (built-in)
+
+4. Invalid ISSN format
+   - ISSN must be 8 characters
+   - Check for typos
+   - Verify with journal website
+
+
+TESTING
+-------
+
+Run unit tests:
+    python test_impactFactorCollector.py
+
+Run examples:
+    python example_impact_factor_collector.py
+
+
+FILES INCLUDED
+--------------
+
+impactFactorCollector.py
+    Main module with all classes
+
+test_impactFactorCollector.py
+    Comprehensive unit tests
+
+example_impact_factor_collector.py
+    Usage examples and demonstrations
+
+README_impactFactorCollector.md
+    Full documentation
+
+QUICK_REFERENCE.txt
+    This file
+
+
+REQUIREMENTS
+------------
+
+- pandas
+- requests
+- urllib3
+
+Install: pip install -r requirements.txt
+
+
+TIPS & TRICKS
+-------------
+
+1. Always provide email for OpenAlex (polite pool = faster)
+2. Use SJR data when available (more comprehensive)
+3. Batch process for efficiency (not one-by-one)
+4. Export to JS for browser extensions
+5. Export to CSV for data analysis
+6. Check logs for debugging (INFO level)
+7. Handle missing data gracefully (check source='none')
+8. ISSN normalization is automatic
+9. Rate limiting is built-in
+10. Retry logic handles transient errors
+
+
+EXAMPLE COMMAND LINE USAGE
+---------------------------
+
+# Quick test of a single ISSN
+python -c "
+from impactFactorCollector import ImpactFactorCollector
+c = ImpactFactorCollector(sjr_csv_path='data/raw/scimagojr.csv')
+print(c.get_impact_factor('0028-0836'))
+"
+
+# Batch process from file
+python -c "
+import pandas as pd
+from impactFactorCollector import ImpactFactorCollector
+c = ImpactFactorCollector(sjr_csv_path='data/raw/scimagojr.csv')
+issns = pd.read_csv('data/ISSNs.csv')['ISSN'].tolist()
+results = c.batch_collect(issns)
+c.export_to_js(results, 'output/impact_factors.js')
+"
+
+
+INTEGRATION WITH EXTENSION
+---------------------------
+
+1. Collect data:
+   collector = ImpactFactorCollector(sjr_csv_path="data/raw/scimagojr.csv")
+   results = collector.batch_collect(your_issn_list)
+
+2. Export to JS:
+   collector.export_to_js(results, "extension/data/impact_factors.js")
+
+3. Include in extension:
+   <script src="data/impact_factors.js"></script>
+
+4. Use in extension code:
+   if (sfc.impactFactors[issn]) {
+       let if_value = sfc.impactFactors[issn].value;
+       let quartile = sfc.impactFactors[issn].quartile;
+   }
+
+
+SUPPORT
+-------
+
+For issues or questions:
+1. Check README_impactFactorCollector.md
+2. Run example_impact_factor_collector.py
+3. Check test_impactFactorCollector.py for usage patterns
+4. Enable DEBUG logging for detailed output
+
+"""

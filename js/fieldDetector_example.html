@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FieldDetector Test Examples</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-item {
+            margin: 15px 0;
+            padding: 15px;
+            border-left: 4px solid #4CAF50;
+            background: #f9f9f9;
+        }
+        .journal-name {
+            font-weight: bold;
+            color: #2196F3;
+            font-size: 16px;
+        }
+        .issn {
+            color: #666;
+            font-size: 14px;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background: #e8f5e9;
+            border-radius: 4px;
+        }
+        .field {
+            color: #2e7d32;
+            font-weight: bold;
+        }
+        .confidence {
+            display: inline-block;
+            padding: 2px 8px;
+            background: #4CAF50;
+            color: white;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+        .method {
+            display: inline-block;
+            padding: 2px 8px;
+            background: #2196F3;
+            color: white;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+        .code {
+            background: #263238;
+            color: #aed581;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        .button {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .button:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>FieldDetector.js - Usage Examples</h1>
+
+    <div class="test-section">
+        <h2>Quick Start</h2>
+        <div class="code">
+<pre>// Initialize the detector
+const detector = new FieldDetector();
+
+// Detect field from journal name and ISSN
+const result = detector.detectField("Nature Physics", "1745-2473");
+
+console.log(result);
+// Output: {
+//   primary_field: "natural_sciences.physics",
+//   broad_category: "natural_sciences",
+//   confidence: 0.9,
+//   all_matches: [...],
+//   method: "pattern"
+// }</pre>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test Cases</h2>
+        <button class="button" onclick="runAllTests()">Run All Tests</button>
+        <div id="test-results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Interactive Test</h2>
+        <div>
+            <label for="journal-input">Journal Name:</label><br>
+            <input type="text" id="journal-input" placeholder="e.g., Nature Physics" style="width: 60%; padding: 8px; margin: 5px 0;">
+        </div>
+        <div>
+            <label for="issn-input">ISSN (optional):</label><br>
+            <input type="text" id="issn-input" placeholder="e.g., 1745-2473" style="width: 60%; padding: 8px; margin: 5px 0;">
+        </div>
+        <button class="button" onclick="testCustomInput()">Detect Field</button>
+        <div id="custom-result" style="margin-top: 15px;"></div>
+    </div>
+
+    <script src="fieldDetector.js"></script>
+    <script>
+        // Test cases covering different fields
+        const testCases = [
+            // Natural Sciences - Physics
+            {name: "Nature Physics", issn: "1745-2473", expected: "natural_sciences.physics"},
+            {name: "Physical Review Letters", issn: "0031-9007", expected: "natural_sciences.physics"},
+            {name: "Journal of Applied Physics", issn: "", expected: "natural_sciences.physics"},
+            {name: "Quantum Information Processing", issn: "", expected: "natural_sciences.physics"},
+
+            // Natural Sciences - Chemistry
+            {name: "Journal of the American Chemical Society", issn: "0002-7863", expected: "natural_sciences.chemistry"},
+            {name: "Angewandte Chemie International Edition", issn: "1433-7851", expected: "natural_sciences.chemistry"},
+            {name: "Chemical Reviews", issn: "", expected: "natural_sciences.chemistry"},
+            {name: "Organic Letters", issn: "", expected: "natural_sciences.chemistry"},
+
+            // Natural Sciences - Biology
+            {name: "Nature Genetics", issn: "1061-4036", expected: "natural_sciences.biology"},
+            {name: "Cell", issn: "0092-8674", expected: "natural_sciences.biology"},
+            {name: "Journal of Molecular Biology", issn: "", expected: "natural_sciences.biology"},
+            {name: "PLOS Biology", issn: "", expected: "natural_sciences.biology"},
+
+            // Natural Sciences - Mathematics
+            {name: "Annals of Mathematics", issn: "0003-486X", expected: "natural_sciences.mathematics"},
+            {name: "Journal of Algebra", issn: "", expected: "natural_sciences.mathematics"},
+            {name: "Mathematical Statistics", issn: "", expected: "natural_sciences.mathematics"},
+
+            // Engineering - Computer Science
+            {name: "IEEE Transactions on Software Engineering", issn: "", expected: "engineering.computer_science"},
+            {name: "ACM Computing Surveys", issn: "", expected: "engineering.computer_science"},
+            {name: "Journal of Machine Learning Research", issn: "", expected: "engineering.computer_science"},
+            {name: "Information and Computation", issn: "", expected: "engineering.computer_science"},
+
+            // Engineering - Electrical
+            {name: "IEEE Transactions on Circuits and Systems", issn: "", expected: "engineering.electrical"},
+            {name: "Journal of Electronic Materials", issn: "", expected: "engineering.electrical"},
+
+            // Medical Sciences
+            {name: "The Lancet", issn: "0140-6736", expected: "medical.clinical"},
+            {name: "New England Journal of Medicine", issn: "", expected: "medical.clinical"},
+            {name: "Journal of Clinical Oncology", issn: "", expected: "medical.clinical"},
+            {name: "American Journal of Public Health", issn: "", expected: "medical.public_health"},
+
+            // Social Sciences
+            {name: "American Economic Review", issn: "", expected: "social_sciences.economics"},
+            {name: "Journal of Finance", issn: "", expected: "social_sciences.economics"},
+            {name: "Psychological Review", issn: "", expected: "social_sciences.psychology"},
+            {name: "American Sociological Review", issn: "", expected: "social_sciences.sociology"},
+
+            // Humanities
+            {name: "Modern Language Review", issn: "", expected: "humanities.literature"},
+            {name: "Journal of Philosophy", issn: "", expected: "humanities.philosophy"},
+            {name: "Historical Journal", issn: "", expected: "humanities.history"}
+        ];
+
+        function runAllTests() {
+            const detector = new FieldDetector();
+            const resultsDiv = document.getElementById('test-results');
+            resultsDiv.innerHTML = '';
+
+            let passed = 0;
+            let total = testCases.length;
+
+            testCases.forEach((testCase, index) => {
+                const result = detector.detectField(testCase.name, testCase.issn);
+                const isCorrect = result.primary_field === testCase.expected;
+
+                if (isCorrect) passed++;
+
+                const testDiv = document.createElement('div');
+                testDiv.className = 'test-item';
+                testDiv.style.borderLeftColor = isCorrect ? '#4CAF50' : '#f44336';
+
+                testDiv.innerHTML = `
+                    <div class="journal-name">${testCase.name}</div>
+                    ${testCase.issn ? `<div class="issn">ISSN: ${testCase.issn}</div>` : ''}
+                    <div class="result">
+                        <strong>Detected:</strong> <span class="field">${result.primary_field}</span>
+                        <span class="confidence">${(result.confidence * 100).toFixed(0)}%</span>
+                        <span class="method">${result.method}</span>
+                        <br>
+                        <strong>Expected:</strong> ${testCase.expected}
+                        ${isCorrect ? ' ✓' : ' ✗'}
+                        ${result.all_matches && result.all_matches.length > 1 ?
+                            `<br><small>Other matches: ${result.all_matches.slice(1, 3).map(m => m.field).join(', ')}</small>` : ''}
+                    </div>
+                `;
+
+                resultsDiv.appendChild(testDiv);
+            });
+
+            // Add summary
+            const summary = document.createElement('div');
+            summary.style.marginTop = '20px';
+            summary.style.padding = '15px';
+            summary.style.background = passed === total ? '#e8f5e9' : '#fff3e0';
+            summary.style.borderRadius = '4px';
+            summary.innerHTML = `
+                <h3>Test Summary</h3>
+                <p><strong>Passed:</strong> ${passed} / ${total} (${((passed/total)*100).toFixed(1)}%)</p>
+            `;
+            resultsDiv.appendChild(summary);
+        }
+
+        function testCustomInput() {
+            const detector = new FieldDetector();
+            const journalName = document.getElementById('journal-input').value;
+            const issn = document.getElementById('issn-input').value;
+            const resultDiv = document.getElementById('custom-result');
+
+            if (!journalName) {
+                resultDiv.innerHTML = '<p style="color: red;">Please enter a journal name.</p>';
+                return;
+            }
+
+            const result = detector.detectField(journalName, issn);
+
+            resultDiv.innerHTML = `
+                <div class="result">
+                    <h3>Detection Result:</h3>
+                    <p><strong>Primary Field:</strong> <span class="field">${result.primary_field}</span></p>
+                    <p><strong>Broad Category:</strong> ${result.broad_category}</p>
+                    <p><strong>Confidence:</strong> <span class="confidence">${(result.confidence * 100).toFixed(1)}%</span></p>
+                    <p><strong>Method:</strong> <span class="method">${result.method}</span></p>
+                    ${result.all_matches && result.all_matches.length > 0 ? `
+                        <p><strong>All Matches:</strong></p>
+                        <ul>
+                            ${result.all_matches.map(m => `<li>${m.field} (${(m.score * 100).toFixed(0)}%)</li>`).join('')}
+                        </ul>
+                    ` : ''}
+                    ${result.reason ? `<p><small><em>${result.reason}</em></small></p>` : ''}
+                </div>
+            `;
+        }
+
+        // Run tests on page load
+        window.addEventListener('load', function() {
+            console.log('FieldDetector loaded. Click "Run All Tests" to see examples.');
+        });
+    </script>
+</body>
+</html>
