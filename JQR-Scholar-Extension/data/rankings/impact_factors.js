@@ -8372,6 +8372,76 @@ sfc.impactFactors = {
     "source": "JCR",
     "name": "Journal of Alloys and Compounds"
   },
+  "Journal of Alloys and Compounds": {
+    "value": "6.3",
+    "year": 2024,
+    "quartile": "Q1",
+    "source": "JCR",
+    "name": "Journal of Alloys and Compounds"
+  },
+  "JOURNAL OF ALLOYS AND COMPOUNDS": {
+    "value": "6.3",
+    "year": 2024,
+    "quartile": "Q1",
+    "source": "JCR",
+    "name": "Journal of Alloys and Compounds"
+  },
+  "Journal of Radiation Researches": {
+    "value": "0",
+    "year": 2024,
+    "quartile": "",
+    "source": "JCR",
+    "name": "Journal of Radiation Researches"
+  },
+  "JOURNAL OF RADIATION RESEARCHES": {
+    "value": "0",
+    "year": 2024,
+    "quartile": "",
+    "source": "JCR",
+    "name": "Journal of Radiation Researches"
+  },
+  "Radiation technologies and their application": {
+    "value": "0",
+    "year": 2024,
+    "quartile": "",
+    "source": "JCR",
+    "name": "Radiation technologies and their application"
+  },
+  "RADIATION TECHNOLOGIES AND THEIR APPLICATION": {
+    "value": "0",
+    "year": 2024,
+    "quartile": "",
+    "source": "JCR",
+    "name": "Radiation technologies and their application"
+  },
+  "Advanced Physical Research": {
+    "value": "0",
+    "year": 2024,
+    "quartile": "",
+    "source": "JCR",
+    "name": "Advanced Physical Research"
+  },
+  "ADVANCED PHYSICAL RESEARCH": {
+    "value": "0",
+    "year": 2024,
+    "quartile": "",
+    "source": "JCR",
+    "name": "Advanced Physical Research"
+  },
+  "International Journal of Refractory Metals and Hard Materials": {
+    "value": "4.6",
+    "year": 2024,
+    "quartile": "Q1",
+    "source": "JCR",
+    "name": "International Journal of Refractory Metals and Hard Materials"
+  },
+  "INTERNATIONAL JOURNAL OF REFRACTORY METALS AND HARD MATERIALS": {
+    "value": "4.6",
+    "year": 2024,
+    "quartile": "Q1",
+    "source": "JCR",
+    "name": "International Journal of Refractory Metals and Hard Materials"
+  },
   "19324391": {
     "value": "6.3",
     "year": 2024,
@@ -15604,6 +15674,20 @@ sfc.impactFactors = {
     "name": "International Journal of Disaster Risk Reduction"
   },
   "03702693": {
+    "value": "4.5",
+    "year": 2024,
+    "quartile": "Q1",
+    "source": "JCR",
+    "name": "PHYSICS LETTERS B"
+  },
+  "Physics Letters B": {
+    "value": "4.5",
+    "year": 2024,
+    "quartile": "Q1",
+    "source": "JCR",
+    "name": "PHYSICS LETTERS B"
+  },
+  "PHYSICS LETTERS B": {
     "value": "4.5",
     "year": 2024,
     "quartile": "Q1",
@@ -70974,7 +71058,21 @@ sfc.impactFactors = {
     "name": "International Journal of Steel Structures"
   },
   "05874254": {
-    "value": "1.0",
+    "value": "1.4",
+    "year": 2024,
+    "quartile": "Q3",
+    "source": "JCR",
+    "name": "ACTA PHYSICA POLONICA B"
+  },
+  "Acta Physica Polonica B": {
+    "value": "1.4",
+    "year": 2024,
+    "quartile": "Q3",
+    "source": "JCR",
+    "name": "ACTA PHYSICA POLONICA B"
+  },
+  "ACTA PHYSICA POLONICA B": {
+    "value": "1.4",
     "year": 2024,
     "quartile": "Q3",
     "source": "JCR",
