@@ -2,7 +2,7 @@
 <h3 align="center">Instant journal quality metrics on Google Scholar search results</h3>
 
 <p align="center">
-  <b>🇬🇧 English</b> · <a href="./README_VI.html">🇻🇳 Tiếng Việt</a>
+  <b>🇬🇧 English</b> · <a href="./README_VI.md">🇻🇳 Tiếng Việt</a>
 </p>
 
 <p align="center">
