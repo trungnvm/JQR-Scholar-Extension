@@ -3,273 +3,818 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JQR - Hướng Dẫn Sử Dụng</title>
+  <title>JQR - Hướng Dẫn Sử Dụng Extension</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0d1117;
-      --card: #161b22;
-      --border: #30363d;
-      --text: #e6edf3;
-      --text-muted: #8b949e;
-      --accent: #58a6ff;
-      --green: #3fb950;
-      --orange: #d29922;
-      --red: #f85149;
-      --badge-bg: #1f2937;
+      --primary: #3B82F6;
+      --primary-light: #60A5FA;
+      --primary-dark: #2563EB;
+      --accent: #F97316;
+      --accent-light: #FB923C;
+      --bg-dark: #0B1120;
+      --bg-card: rgba(15, 23, 42, 0.6);
+      --bg-card-hover: rgba(30, 41, 59, 0.7);
+      --border: rgba(59, 130, 246, 0.15);
+      --border-hover: rgba(59, 130, 246, 0.4);
+      --text: #E2E8F0;
+      --text-muted: #94A3B8;
+      --text-bright: #F8FAFC;
+      --green: #22C55E;
+      --green-bg: rgba(34, 197, 94, 0.1);
+      --red: #EF4444;
+      --yellow: #EAB308;
+      --yellow-bg: rgba(234, 179, 8, 0.1);
+      --mono: 'JetBrains Mono', monospace;
+      --sans: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --radius: 16px;
+      --radius-sm: 10px;
+      --glow: 0 0 40px rgba(59, 130, 246, 0.15);
     }
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      background: var(--bg);
+      font-family: var(--sans);
+      background: var(--bg-dark);
       color: var(--text);
       line-height: 1.7;
-      padding: 2rem 1rem;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
-    .container { max-width: 860px; margin: 0 auto; }
 
-    /* Header */
-    .header { text-align: center; margin-bottom: 2.5rem; }
-    .header h1 { font-size: 2rem; margin-bottom: 0.3rem; }
-    .header h1 img { vertical-align: middle; margin-right: 8px; }
-    .header p.subtitle { color: var(--text-muted); font-size: 1.1rem; }
-    .lang-switch { margin-top: 0.8rem; font-size: 0.9rem; }
-    .lang-switch a { color: var(--accent); text-decoration: none; }
-    .lang-switch a:hover { text-decoration: underline; }
-
-    /* Sections */
-    h2 {
-      font-size: 1.4rem;
-      margin: 2.5rem 0 1rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 1px solid var(--border);
+    /* Background mesh gradient */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 20% 0%, rgba(59, 130, 246, 0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 100%, rgba(249, 115, 22, 0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 50% at 50% 50%, rgba(59, 130, 246, 0.04) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: -1;
     }
-    h3 { font-size: 1.15rem; margin: 1.5rem 0 0.8rem; color: var(--accent); }
 
-    p { margin-bottom: 0.8rem; }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
 
-    /* Feature list */
-    .features { list-style: none; padding: 0; }
-    .features li {
-      padding: 0.6rem 0.8rem;
-      margin-bottom: 0.4rem;
-      background: var(--card);
-      border-radius: 8px;
+    /* ===== HERO ===== */
+    .hero {
+      text-align: center;
+      padding: 5rem 1.5rem 3rem;
+      position: relative;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border-hover), transparent);
+    }
+
+    .hero-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-size: 3rem;
+      font-weight: 700;
+      letter-spacing: -1px;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero-logo img {
+      width: 42px;
+      height: 42px;
+      filter: drop-shadow(0 0 12px rgba(59, 130, 246, 0.5));
+    }
+
+    .hero h2 {
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.02em;
+    }
+
+    .badges {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 1.2rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      border: 1px solid;
+    }
+    .badge-blue { background: rgba(59, 130, 246, 0.12); border-color: rgba(59, 130, 246, 0.3); color: var(--primary-light); }
+    .badge-green { background: var(--green-bg); border-color: rgba(34, 197, 94, 0.3); color: var(--green); }
+    .badge-orange { background: rgba(249, 115, 22, 0.12); border-color: rgba(249, 115, 22, 0.3); color: var(--accent-light); }
+
+    .lang-switch {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .lang-switch a {
+      color: var(--primary-light);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .lang-switch a:hover { color: var(--text-bright); }
+
+    /* ===== SECTIONS ===== */
+    section { padding: 3rem 0; }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: var(--text-bright);
+    }
+
+    .section-title .icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      font-size: 1.1rem;
+    }
+    .icon-blue { background: rgba(59, 130, 246, 0.15); }
+    .icon-green { background: var(--green-bg); }
+    .icon-orange { background: rgba(249, 115, 22, 0.12); }
+    .icon-purple { background: rgba(139, 92, 246, 0.12); }
+
+    .section-desc {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      max-width: 700px;
+    }
+
+    /* ===== CARDS ===== */
+    .card {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      transition: all 0.3s ease;
     }
-    .features li strong { color: var(--accent); }
-
-    /* Steps */
-    ol { padding-left: 1.5rem; }
-    ol li { margin-bottom: 0.6rem; }
-
-    /* Code */
-    code {
-      background: var(--card);
-      border: 1px solid var(--border);
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 0.9em;
-      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    .card:hover {
+      border-color: var(--border-hover);
+      box-shadow: var(--glow);
+      transform: translateY(-2px);
     }
-    pre {
-      background: var(--card);
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+
+    .feature-card {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .feature-icon {
+      flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.15);
+    }
+
+    .feature-card h4 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-bright);
+      margin-bottom: 2px;
+    }
+
+    .feature-card p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* ===== INSTALL TABS ===== */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 0;
+      background: rgba(15, 23, 42, 0.5);
+      border-radius: var(--radius) var(--radius) 0 0;
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1rem;
+      border-bottom: none;
+      padding: 6px;
       overflow-x: auto;
-      margin: 0.5rem 0 1rem;
     }
-    pre code { background: none; border: none; padding: 0; }
 
-    /* Table */
+    .tab {
+      flex: 1;
+      padding: 10px 20px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: var(--sans);
+      font-size: 0.9rem;
+      font-weight: 500;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .tab:hover { color: var(--text); background: rgba(59, 130, 246, 0.08); }
+    .tab.active {
+      background: rgba(59, 130, 246, 0.15);
+      color: var(--primary-light);
+      font-weight: 600;
+    }
+
+    .tab-panel {
+      display: none;
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 0 0 var(--radius) var(--radius);
+      padding: 2rem;
+      animation: fadeIn 0.3s ease;
+    }
+    .tab-panel.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== STEPS ===== */
+    .steps { counter-reset: step; }
+
+    .step {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.2rem;
+      align-items: flex-start;
+    }
+
+    .step::before {
+      counter-increment: step;
+      content: counter(step);
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      font-weight: 700;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .step-content { flex: 1; padding-top: 4px; }
+    .step-content strong { color: var(--text-bright); }
+    .step-content ul {
+      margin-top: 0.5rem;
+      padding-left: 1.2rem;
+      color: var(--text-muted);
+    }
+    .step-content li { margin-bottom: 0.3rem; }
+
+    /* ===== CODE ===== */
+    code {
+      font-family: var(--mono);
+      font-size: 0.85em;
+      background: rgba(59, 130, 246, 0.08);
+      border: 1px solid rgba(59, 130, 246, 0.12);
+      padding: 2px 8px;
+      border-radius: 6px;
+      color: var(--primary-light);
+    }
+
+    pre {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 1rem 1.2rem;
+      overflow-x: auto;
+      margin: 0.6rem 0;
+    }
+    pre code {
+      background: none;
+      border: none;
+      padding: 0;
+      color: var(--text);
+    }
+
+    /* ===== TABLE ===== */
+    .table-wrapper {
+      overflow-x: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
-      margin: 1rem 0;
-      font-size: 0.95rem;
-    }
-    th, td {
-      padding: 0.6rem 0.8rem;
-      border: 1px solid var(--border);
-      text-align: left;
-    }
-    th { background: var(--card); font-weight: 600; color: var(--accent); }
-    tr:nth-child(even) { background: rgba(22, 27, 34, 0.5); }
-
-    /* Alert */
-    .alert {
-      background: rgba(210, 153, 34, 0.1);
-      border: 1px solid var(--orange);
-      border-radius: 8px;
-      padding: 0.8rem 1rem;
-      margin: 1rem 0;
-      font-size: 0.95rem;
-    }
-    .alert::before { content: "⚠️ "; }
-
-    /* Badges */
-    .badges { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin: 1rem 0; }
-    .badge {
-      display: inline-block;
-      padding: 4px 10px;
-      border-radius: 4px;
-      font-size: 0.8rem;
-      font-weight: 600;
-    }
-    .badge-blue { background: #1f6feb; }
-    .badge-green { background: #238636; }
-    .badge-orange { background: #9e6a03; }
-
-    /* Images */
-    .preview-img {
-      max-width: 100%;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      margin: 0.5rem 0 1rem;
-    }
-
-    /* Footer */
-    .footer {
-      margin-top: 3rem;
-      padding-top: 1.5rem;
-      border-top: 1px solid var(--border);
-      text-align: center;
-      color: var(--text-muted);
       font-size: 0.9rem;
     }
-    .footer a { color: var(--accent); text-decoration: none; }
 
-    /* Responsive */
-    @media (max-width: 600px) {
-      body { padding: 1rem 0.5rem; }
-      .header h1 { font-size: 1.5rem; }
-      table { font-size: 0.85rem; }
-      th, td { padding: 0.4rem; }
+    th {
+      padding: 0.8rem 1rem;
+      text-align: left;
+      font-weight: 600;
+      color: var(--primary-light);
+      background: rgba(59, 130, 246, 0.08);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 0.7rem 1rem;
+      border-bottom: 1px solid rgba(59, 130, 246, 0.06);
+      color: var(--text-muted);
+    }
+
+    td:first-child {
+      font-weight: 600;
+      color: var(--text-bright);
+      font-family: var(--mono);
+      font-size: 0.85rem;
+    }
+
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(59, 130, 246, 0.04); }
+
+    /* ===== ALERT ===== */
+    .alert {
+      border-radius: var(--radius-sm);
+      padding: 1rem 1.2rem;
+      margin: 1.2rem 0;
+      font-size: 0.9rem;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      line-height: 1.6;
+    }
+    .alert-icon { flex-shrink: 0; font-size: 1.1rem; margin-top: 2px; }
+    .alert-warn {
+      background: var(--yellow-bg);
+      border: 1px solid rgba(234, 179, 8, 0.2);
+      color: #FDE68A;
+    }
+    .alert-info {
+      background: rgba(59, 130, 246, 0.08);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      color: var(--primary-light);
+    }
+    .alert a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+
+    /* ===== USAGE FLOW ===== */
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+
+    .flow-item {
+      text-align: center;
+      padding: 1.5rem 1rem;
+    }
+
+    .flow-num {
+      width: 36px;
+      height: 36px;
+      margin: 0 auto 0.8rem;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      font-weight: 700;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .flow-item h4 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-bright);
+      margin-bottom: 4px;
+    }
+
+    .flow-item p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* ===== NOTES ===== */
+    .notes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    .note-card {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .note-dot {
+      flex-shrink: 0;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--primary);
+      margin-top: 8px;
+    }
+
+    .note-card p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .note-card strong { color: var(--text-bright); }
+
+    /* ===== FOOTER ===== */
+    .footer {
+      text-align: center;
+      padding: 3rem 1.5rem;
+      margin-top: 2rem;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+    .footer a {
+      color: var(--primary-light);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer a:hover { color: var(--text-bright); }
+    .footer p { margin-bottom: 0.4rem; }
+
+    /* ===== NAV FLOATING ===== */
+    .back-top {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+      z-index: 50;
+    }
+    .back-top.visible { opacity: 1; visibility: visible; }
+    .back-top:hover { transform: translateY(-2px); background: var(--primary-dark); }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 640px) {
+      .hero { padding: 3rem 1rem 2rem; }
+      .hero-logo { font-size: 2.2rem; }
+      .hero h2 { font-size: 1rem; }
+      .section-title { font-size: 1.3rem; }
+      .feature-grid { grid-template-columns: 1fr; }
+      .flow { grid-template-columns: 1fr 1fr; }
+      .tab { padding: 8px 14px; font-size: 0.82rem; }
+      .tab-panel { padding: 1.2rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; }
     }
   </style>
 </head>
 <body>
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="hero-logo">
+      <img src="./JQR-Scholar-Extension/icon/64x64.png" alt="JQR" width="42" height="42">
+      JQR
+    </div>
+    <h2>Kiểm tra chất lượng tạp chí khoa học ngay trên Google Scholar</h2>
+    <div class="badges">
+      <span class="badge badge-blue">Manifest V3</span>
+      <span class="badge badge-green">Chrome</span>
+      <span class="badge badge-orange">Firefox</span>
+      <span class="badge badge-green">v1.0</span>
+    </div>
+    <div class="lang-switch">
+      <a href="./README.md">English</a> &middot; <strong>Tiếng Việt</strong>
+    </div>
+  </header>
+
   <div class="container">
 
-    <!-- Header -->
-    <div class="header">
-      <h1><img src="./JQR-Scholar-Extension/icon/32x32.png" height="24" alt="JQR"> JQR - Kiểm Tra Chất Lượng Tạp Chí</h1>
-      <p class="subtitle">Hiển thị xếp hạng tạp chí ngay trên Google Scholar</p>
-      <div class="badges">
-        <span class="badge badge-blue">Manifest V3</span>
-        <span class="badge badge-green">Chrome</span>
-        <span class="badge badge-orange">Firefox</span>
-        <span class="badge badge-green">v1.0</span>
+    <!-- Intro -->
+    <section>
+      <h2 class="section-title"><span class="icon icon-blue">&#128218;</span> Giới thiệu</h2>
+      <p class="section-desc">
+        <strong>JQR</strong> là extension giúp bạn <strong>đánh giá nhanh chất lượng tạp chí</strong> khi tìm kiếm trên Google Scholar. Không cần mở tab khác — ranking hiển thị trực tiếp bên cạnh mỗi kết quả tìm kiếm, với badge màu sắc trực quan.
+      </p>
+    </section>
+
+    <!-- Features -->
+    <section>
+      <h2 class="section-title"><span class="icon icon-purple">&#9889;</span> Tính năng</h2>
+      <div class="feature-grid">
+        <div class="card feature-card">
+          <div class="feature-icon">&#128202;</div>
+          <div>
+            <h4>15+ Hệ thống xếp hạng</h4>
+            <p>SJR, Impact Factor, H-Index, VHB, ABDC, AJG, CORE, CCF, CNRS, FT50...</p>
+          </div>
+        </div>
+        <div class="card feature-card">
+          <div class="feature-icon">&#127912;</div>
+          <div>
+            <h4>Badge màu sắc</h4>
+            <p>Xanh = chất lượng cao, Đỏ = thấp — nhận biết ngay không cần đọc số</p>
+          </div>
+        </div>
+        <div class="card feature-card">
+          <div class="feature-icon">&#128269;</div>
+          <div>
+            <h4>Tìm kiếm tạp chí</h4>
+            <p>Tra cứu nhanh ranking bất kỳ tạp chí nào từ popup extension</p>
+          </div>
+        </div>
+        <div class="card feature-card">
+          <div class="feature-icon">&#127991;</div>
+          <div>
+            <h4>Phân loại lĩnh vực</h4>
+            <p>Tự động nhận diện lĩnh vực nghiên cứu cho bài báo</p>
+          </div>
+        </div>
+        <div class="card feature-card">
+          <div class="feature-icon">&#128433;</div>
+          <div>
+            <h4>Hover xem chi tiết</h4>
+            <p>Di chuột lên badge → xem H-Index, tên tạp chí đã nhận diện</p>
+          </div>
+        </div>
+        <div class="card feature-card">
+          <div class="feature-icon">&#9881;</div>
+          <div>
+            <h4>Tùy chỉnh linh hoạt</h4>
+            <p>Bật/tắt từng hệ thống ranking theo nhu cầu nghiên cứu</p>
+          </div>
+        </div>
       </div>
-      <div class="lang-switch">
-        <a href="./README.md">🇬🇧 English</a> · <b>🇻🇳 Tiếng Việt</b>
+    </section>
+
+    <!-- Install -->
+    <section>
+      <h2 class="section-title"><span class="icon icon-green">&#128640;</span> Cài đặt</h2>
+
+      <div class="tabs" role="tablist">
+        <button class="tab active" role="tab" onclick="switchTab(event, 'chrome')">Chrome / Edge / Brave</button>
+        <button class="tab" role="tab" onclick="switchTab(event, 'firefox')">Firefox</button>
+        <button class="tab" role="tab" onclick="switchTab(event, 'clone')">Clone từ GitHub</button>
       </div>
-    </div>
 
-    <!-- Giới thiệu -->
-    <h2>📌 Giới thiệu</h2>
-    <p><strong>JQR</strong> là extension trình duyệt giúp bạn <strong>kiểm tra nhanh chất lượng tạp chí khoa học</strong> ngay trên kết quả tìm kiếm Google Scholar — không cần mở tab khác hay tra cứu thủ công.</p>
-    <p>Extension sẽ <strong>tự động</strong> hiển thị các badge xếp hạng (SJR, Impact Factor, H-Index...) bên cạnh mỗi kết quả, với <strong>màu sắc trực quan</strong> từ xanh (chất lượng cao) đến đỏ (chất lượng thấp).</p>
+      <!-- Chrome -->
+      <div id="chrome" class="tab-panel active">
+        <div class="steps">
+          <div class="step">
+            <div class="step-content">
+              <strong>Tải extension</strong> — nhấn nút <strong>Code → Download ZIP</strong> trên GitHub, rồi giải nén
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-content">
+              <strong>Mở trang extension</strong> — gõ vào thanh địa chỉ:
+              <ul>
+                <li>Chrome: <code>chrome://extensions/</code></li>
+                <li>Edge: <code>edge://extensions/</code></li>
+                <li>Brave: <code>brave://extensions/</code></li>
+              </ul>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-content">
+              <strong>Bật Developer mode</strong> — toggle ở góc trên bên phải trang
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-content">
+              <strong>Nhấn "Load unpacked"</strong> — chọn thư mục <code>JQR-Scholar-Extension</code> (chứa file <code>manifest.json</code>)
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-content">
+              <strong>Xong!</strong> Icon JQR sẽ xuất hiện trên thanh công cụ
+            </div>
+          </div>
+        </div>
+      </div>
 
-    <!-- Tính năng -->
-    <h2>✨ Tính năng chính</h2>
-    <ul class="features">
-      <li>📊 <strong>15+ hệ thống xếp hạng</strong> — SJR, Impact Factor, H-Index, VHB, ABDC, AJG, CORE, CCF, CNRS, FNEGE, FT50, HCERES, BFI, SNIP, CiteScore</li>
-      <li>🎨 <strong>Badge màu sắc</strong> — Xanh lá = chất lượng cao, Đỏ = chất lượng thấp</li>
-      <li>🔍 <strong>Tìm kiếm tạp chí</strong> — Tra cứu ranking của bất kỳ tạp chí nào từ popup</li>
-      <li>🏷️ <strong>Phân loại lĩnh vực</strong> — Tự động nhận diện lĩnh vực nghiên cứu</li>
-      <li>🖱️ <strong>Hover xem chi tiết</strong> — Di chuột lên badge để xem H-Index, tên tạp chí</li>
-      <li>🔗 <strong>Click vào DOI</strong> — Nhấn badge để mở bài báo gốc</li>
-      <li>⚙️ <strong>Tùy chỉnh</strong> — Bật/tắt từng ranking theo nhu cầu</li>
-    </ul>
+      <!-- Firefox -->
+      <div id="firefox" class="tab-panel">
+        <div class="steps">
+          <div class="step">
+            <div class="step-content">
+              <strong>Tải extension</strong> về máy (giống Chrome ở trên)
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-content">
+              Mở Firefox, gõ: <code>about:debugging#/runtime/this-firefox</code>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-content">
+              Nhấn <strong>"Load Temporary Add-on..."</strong> → chọn file <code>manifest.json</code>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-content">
+              Vào <strong>cài đặt addon</strong> → cấp quyền cho Google Scholar (vd: <code>scholar.google.com.vn</code>)
+            </div>
+          </div>
+        </div>
+        <div class="alert alert-warn">
+          <span class="alert-icon">&#9888;</span>
+          <span>Cài tạm thời trên Firefox sẽ mất khi restart. Để cài vĩnh viễn: <a href="https://addons.mozilla.org/de/firefox/addon/rapid-journal-quality-check/">Firefox Add-ons</a></span>
+        </div>
+      </div>
 
-    <!-- Cài đặt Chrome -->
-    <h2>🚀 Hướng dẫn cài đặt</h2>
+      <!-- Clone -->
+      <div id="clone" class="tab-panel">
+        <div class="steps">
+          <div class="step">
+            <div class="step-content">
+              <strong>Clone repo</strong>:
+              <pre><code>git clone https://github.com/trungnvm/JQR-Scholar-Extension.git</code></pre>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-content">
+              <strong>Mở thư mục</strong> <code>JQR-Scholar-Extension</code> và load vào trình duyệt theo hướng dẫn Chrome hoặc Firefox ở tab bên cạnh
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-    <h3>Cài trên Chrome / Edge / Brave</h3>
-    <ol>
-      <li><strong>Tải extension</strong> về máy:
-        <ul>
-          <li>Nhấn nút <strong>Code → Download ZIP</strong> trên GitHub</li>
-          <li>Hoặc clone qua terminal:
-            <pre><code>git clone https://github.com/trungnvm/JQR-Scholar-Extension.git</code></pre>
-          </li>
-        </ul>
-      </li>
-      <li><strong>Giải nén</strong> file ZIP (nếu tải ZIP)</li>
-      <li><strong>Mở trang quản lý extension</strong>:
-        <ul>
-          <li>Chrome: gõ <code>chrome://extensions/</code></li>
-          <li>Edge: gõ <code>edge://extensions/</code></li>
-          <li>Brave: gõ <code>brave://extensions/</code></li>
-        </ul>
-      </li>
-      <li><strong>Bật Developer mode</strong> (Chế độ nhà phát triển) — toggle ở góc trên bên phải</li>
-      <li>Nhấn <strong>"Load unpacked"</strong> (Tải tiện ích đã giải nén)</li>
-      <li>Chọn thư mục <strong><code>JQR-Scholar-Extension</code></strong> (thư mục chứa file <code>manifest.json</code>)</li>
-      <li>✅ Extension sẽ xuất hiện trên thanh công cụ!</li>
-    </ol>
+    <!-- Usage -->
+    <section>
+      <h2 class="section-title"><span class="icon icon-blue">&#128214;</span> Cách sử dụng</h2>
+      <div class="flow">
+        <div class="card flow-item">
+          <div class="flow-num">1</div>
+          <h4>Mở Google Scholar</h4>
+          <p>Truy cập scholar.google.com và search bình thường</p>
+        </div>
+        <div class="card flow-item">
+          <div class="flow-num">2</div>
+          <h4>Xem ranking</h4>
+          <p>Badge xếp hạng xuất hiện tự động bên cạnh kết quả</p>
+        </div>
+        <div class="card flow-item">
+          <div class="flow-num">3</div>
+          <h4>Hover & Click</h4>
+          <p>Di chuột xem chi tiết, nhấn để mở DOI bài báo</p>
+        </div>
+        <div class="card flow-item">
+          <div class="flow-num">4</div>
+          <h4>Tùy chỉnh</h4>
+          <p>Nhấn icon JQR trên toolbar để cấu hình</p>
+        </div>
+      </div>
+      <div class="alert alert-info">
+        <span class="alert-icon">&#128161;</span>
+        <span>Nhấn <strong>"Advanced Settings"</strong> trong popup để chọn cụ thể ranking nào muốn hiển thị</span>
+      </div>
+    </section>
 
-    <!-- Cài đặt Firefox -->
-    <h3>Cài trên Firefox</h3>
-    <ol>
-      <li>Tải extension về máy (như trên)</li>
-      <li>Mở Firefox, gõ vào thanh địa chỉ: <code>about:debugging#/runtime/this-firefox</code></li>
-      <li>Nhấn <strong>"Load Temporary Add-on..."</strong></li>
-      <li>Chọn file <strong><code>manifest.json</code></strong> trong thư mục <code>JQR-Scholar-Extension</code></li>
-      <li>Vào <strong>cài đặt addon</strong> → cấp quyền cho Google Scholar (vd: <code>https://scholar.google.com.vn</code>)</li>
-    </ol>
-    <div class="alert">Cài tạm thời trên Firefox sẽ mất khi restart. Để cài vĩnh viễn, tải từ <a href="https://addons.mozilla.org/de/firefox/addon/rapid-journal-quality-check/" style="color:var(--accent)">Firefox Add-ons</a>.</div>
+    <!-- Rankings Table -->
+    <section>
+      <h2 class="section-title"><span class="icon icon-orange">&#128203;</span> Hệ thống xếp hạng</h2>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr><th>Viết tắt</th><th>Tên đầy đủ</th><th>Lĩnh vực</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>SJR</td><td>SCImago Journal Rank</td><td>Đa ngành</td></tr>
+            <tr><td>JCR</td><td>Journal Citation Reports (Impact Factor)</td><td>Đa ngành</td></tr>
+            <tr><td>ABDC</td><td>Australian Business Deans Council</td><td>Kinh doanh</td></tr>
+            <tr><td>AJG</td><td>Academic Journal Guide (CABS)</td><td>Quản trị</td></tr>
+            <tr><td>CORE</td><td>Computing Research &amp; Education</td><td>Công nghệ</td></tr>
+            <tr><td>CCF</td><td>China Computer Federation</td><td>Tin học</td></tr>
+            <tr><td>CNRS</td><td>Centre National de la Recherche Scientifique</td><td>Đa ngành</td></tr>
+            <tr><td>FNEGE</td><td>Foundation Nationale pour l'Enseignement de la Gestion</td><td>Quản trị</td></tr>
+            <tr><td>FT50</td><td>Financial Times Top 50</td><td>Kinh doanh</td></tr>
+            <tr><td>HCERES</td><td>High Council for Evaluation of Research</td><td>Đa ngành</td></tr>
+            <tr><td>VHB</td><td>VHB-JOURQUAL 3 &amp; 4</td><td>Kinh doanh</td></tr>
+            <tr><td>SNIP</td><td>Source Normalized Impact per Paper</td><td>Đa ngành</td></tr>
+            <tr><td>CiteScore</td><td>CiteScore (Scopus)</td><td>Đa ngành</td></tr>
+            <tr><td>BFI</td><td>Bibliometriske Forskningsindikator</td><td>Đa ngành</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
 
-    <!-- Sử dụng -->
-    <h2>📖 Hướng dẫn sử dụng</h2>
-    <ol>
-      <li>Mở <a href="https://scholar.google.com" style="color:var(--accent)">Google Scholar</a> và tìm kiếm bình thường</li>
-      <li>Các badge xếp hạng sẽ <strong>xuất hiện tự động</strong> bên cạnh mỗi kết quả</li>
-      <li><strong>Di chuột</strong> lên badge → xem chi tiết (H-Index, tên tạp chí)</li>
-      <li><strong>Nhấn vào badge</strong> → mở DOI bài báo</li>
-      <li>Nhấn <strong>icon JQR</strong> trên toolbar để bật/tắt hoặc tìm kiếm tạp chí</li>
-      <li>Nhấn <strong>"Advanced Settings"</strong> để chọn ranking muốn hiển thị</li>
-    </ol>
-
-    <!-- Bảng ranking -->
-    <h2>📋 Bảng xếp hạng được hỗ trợ</h2>
-    <table>
-      <thead>
-        <tr><th>Viết tắt</th><th>Tên đầy đủ</th><th>Lĩnh vực</th></tr>
-      </thead>
-      <tbody>
-        <tr><td><strong>SJR</strong></td><td>SCImago Journal Rank</td><td>Đa ngành</td></tr>
-        <tr><td><strong>JCR</strong></td><td>Journal Citation Reports (Impact Factor)</td><td>Đa ngành</td></tr>
-        <tr><td><strong>ABDC</strong></td><td>Australian Business Deans Council</td><td>Kinh doanh</td></tr>
-        <tr><td><strong>AJG</strong></td><td>Academic Journal Guide (CABS)</td><td>Quản trị</td></tr>
-        <tr><td><strong>CORE</strong></td><td>Computing Research & Education</td><td>Công nghệ</td></tr>
-        <tr><td><strong>CCF</strong></td><td>China Computer Federation</td><td>Tin học</td></tr>
-        <tr><td><strong>CNRS</strong></td><td>Centre National de la Recherche Scientifique</td><td>Đa ngành</td></tr>
-        <tr><td><strong>FNEGE</strong></td><td>Foundation Nationale pour l'Enseignement de la Gestion</td><td>Quản trị</td></tr>
-        <tr><td><strong>FT50</strong></td><td>Financial Times Top 50</td><td>Kinh doanh</td></tr>
-        <tr><td><strong>HCERES</strong></td><td>High Council for Evaluation of Research</td><td>Đa ngành</td></tr>
-        <tr><td><strong>VHB</strong></td><td>VHB-JOURQUAL 3 & 4</td><td>Kinh doanh</td></tr>
-        <tr><td><strong>SNIP</strong></td><td>Source Normalized Impact per Paper</td><td>Đa ngành</td></tr>
-        <tr><td><strong>CiteScore</strong></td><td>CiteScore (Scopus)</td><td>Đa ngành</td></tr>
-        <tr><td><strong>BFI</strong></td><td>Bibliometriske Forskningsindikator</td><td>Đa ngành</td></tr>
-      </tbody>
-    </table>
-
-    <!-- Ghi chú -->
-    <h2>📝 Ghi chú</h2>
-    <ul class="features">
-      <li>Extension hoạt động trên <strong>tất cả domain Google Scholar</strong> (scholar.google.com, .com.vn, .co.uk, ...)</li>
-      <li>Dữ liệu ranking được lưu <strong>offline</strong> trong extension, không cần internet để tra cứu</li>
-      <li>Nếu tạp chí không tìm thấy trong database offline, extension sẽ tra qua <strong>Crossref API</strong></li>
-    </ul>
-
-    <!-- Footer -->
-    <div class="footer">
-      <p>Phát triển bởi <strong>Trung V.M Nguyen</strong></p>
-      <p>Dựa trên extension của <a href="https://de.linkedin.com/in/julianwichmann">Dr. Julian R. K. Wichmann</a> và <a href="https://github.com/WenyanLiu/CCFrank4dblp">CCFrank</a></p>
-    </div>
+    <!-- Notes -->
+    <section>
+      <h2 class="section-title"><span class="icon icon-blue">&#128221;</span> Lưu ý</h2>
+      <div class="notes-grid">
+        <div class="card note-card">
+          <div class="note-dot"></div>
+          <p>Hoạt động trên <strong>tất cả domain</strong> Google Scholar (.com, .com.vn, .co.uk...)</p>
+        </div>
+        <div class="card note-card">
+          <div class="note-dot"></div>
+          <p>Dữ liệu ranking lưu <strong>offline</strong> — không cần internet để tra cứu</p>
+        </div>
+        <div class="card note-card">
+          <div class="note-dot"></div>
+          <p>Tự động tra qua <strong>Crossref API</strong> nếu không tìm thấy offline</p>
+        </div>
+      </div>
+    </section>
 
   </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>Phát triển bởi <strong>Trung V.M Nguyen</strong></p>
+    <p>Dựa trên extension của <a href="https://de.linkedin.com/in/julianwichmann">Dr. Julian R. K. Wichmann</a> &middot; <a href="https://github.com/WenyanLiu/CCFrank4dblp">CCFrank</a></p>
+  </footer>
+
+  <!-- Back to top -->
+  <button class="back-top" id="backTop" title="Lên đầu trang" aria-label="Scroll to top">&#8593;</button>
+
+  <script>
+    // Tabs
+    function switchTab(e, tabId) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      e.currentTarget.classList.add('active');
+      document.getElementById(tabId).classList.add('active');
+    }
+
+    // Back to top
+    const btn = document.getElementById('backTop');
+    window.addEventListener('scroll', () => {
+      btn.classList.toggle('visible', window.scrollY > 400);
+    });
+    btn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
 </body>
 </html>
