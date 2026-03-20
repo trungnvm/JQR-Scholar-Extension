@@ -2,6 +2,10 @@
 <h3 align="center">Instant journal quality metrics on Google Scholar search results</h3>
 
 <p align="center">
+  <b>🇬🇧 English</b> · <a href="./README_VI.md">🇻🇳 Tiếng Việt</a>
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/badge/Manifest-V3-blue" alt="Manifest V3">
   <img src="https://img.shields.io/badge/Chrome-Supported-green" alt="Chrome">
   <img src="https://img.shields.io/badge/Firefox-Supported-orange" alt="Firefox">
