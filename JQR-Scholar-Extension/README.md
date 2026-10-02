@@ -32,7 +32,7 @@ Journal rankings and Impact Factors are directly added to Google Scholar search 
 
 ### 1. Inline Search Result Badges
 <p align="center">
-  <img src="./img/preview.png" alt="JQR Scholar Extension in action on Google Scholar" width="850px" />
+  <img src="./img/preview.png" alt="JQR Scholar Extension in action on Google Scholar" width="750px" />
 </p>
 
 - **Instant Badges**: Displays `[Q1]`, `[Q2]`, `[Q3]`, `[IF: 48.9]`, `[IF: 2.1]`, `[BFI]`, etc. directly beside search results.
@@ -43,7 +43,7 @@ Journal rankings and Impact Factors are directly added to Google Scholar search 
 Hovering over any Quartile or Impact Factor badge instantly displays an interactive, glassmorphic inspection card:
 
 <p align="center">
-  <img src="./img/preview_tooltip.png" alt="Academic Card Tooltip with full metrics breakdown" width="850px" />
+  <img src="./img/preview_tooltip.png" alt="Academic Card Tooltip with full metrics breakdown" width="750px" />
 </p>
 
 - **Key Metrics Grid**: Shows Impact Factor, Quartile, Release Year, Database, and H-Index at a glance.

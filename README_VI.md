@@ -44,7 +44,7 @@ Xếp hạng tạp chí và Impact Factor được tự động tích hợp ngay
 
 ### 1. Huy hiệu trực tiếp trên kết quả tìm kiếm (Inline Badges)
 <p align="center">
-  <img src="./JQR-Scholar-Extension/img/preview.png" alt="JQR Scholar Extension hiển thị trên Google Scholar" width="850px" />
+  <img src="./JQR-Scholar-Extension/img/preview.png" alt="JQR Scholar Extension hiển thị trên Google Scholar" width="750px" />
 </p>
 
 - **Huy hiệu tức thì**: Hiển thị `[Q1]`, `[Q2]`, `[Q3]`, `[IF: 48.9]`, `[IF: 2.1]`, `[BFI]`... ngay cạnh tên tạp chí.
@@ -55,7 +55,7 @@ Xếp hạng tạp chí và Impact Factor được tự động tích hợp ngay
 Khi rê chuột lên bất kỳ huy hiệu Quartile hoặc Impact Factor nào, khung thông tin hiện đại sẽ lập tức xuất hiện:
 
 <p align="center">
-  <img src="./JQR-Scholar-Extension/img/preview_tooltip.png" alt="Khung thông tin học thuật Academic Card Tooltip" width="850px" />
+  <img src="./JQR-Scholar-Extension/img/preview_tooltip.png" alt="Khung thông tin học thuật Academic Card Tooltip" width="750px" />
 </p>
 
 - **Lưới chỉ số trọng yếu**: Thống kê nhanh Impact Factor, Quartile, Năm phát hành, Cơ sở dữ liệu và H-Index.
