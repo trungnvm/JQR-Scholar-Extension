@@ -51,8 +51,8 @@ const i18n = {
   },
   vi: {
     optTitle: "Cài đặt",
-    funSubtitle: "(Kính chiếu yêu)",
-    showFunSubtitle: true,
+    funSubtitle: "",
+    showFunSubtitle: false,
     headerInfo: "Tùy chỉnh các bảng xếp hạng hiển thị trên Google Scholar. Khuyến nghị bật CORE cho ngành CNTT, SJR/JCR cho độ phủ toàn diện, và ABDC/VHB cho khối ngành Kinh tế.",
     hdrCore: "Tính năng cốt lõi",
     lblOn: "Bật JQR",

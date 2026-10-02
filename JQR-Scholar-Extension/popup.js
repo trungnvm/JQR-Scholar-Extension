@@ -54,8 +54,8 @@ const i18n = {
   },
   vi: {
     appTitle: "Journals Quality",
-    funSubtitle: "(Kính chiếu yêu)",
-    showFunSubtitle: true,
+    funSubtitle: "",
+    showFunSubtitle: false,
     txtFeatures: "Tính năng",
     lblEnableAll: "Bật tất cả",
     subEnableAll: "Bật toàn bộ bảng xếp hạng & tính năng",

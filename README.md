@@ -48,7 +48,7 @@ Hovering over any Quartile or Impact Factor badge instantly displays an interact
 
 - **Key Metrics Grid**: Shows Impact Factor, Quartile, Release Year, Database, and H-Index at a glance.
 - **Subject Categories & Rankings Breakdown**: Shows every official subject category with Quartile badge, Exact Rank within field (e.g. `1/180`), and JCI Percentile (e.g. `99.7%`).
-- **Bilingual Support (EN / VI)**: Clean toggle between English and Vietnamese, including playful subtitle *(Kính chiếu yêu)* in Vietnamese mode.
+- **Bilingual Support (EN / VI)**: Clean toggle between English and Vietnamese.
 
 ## 🚀 Installation
 

@@ -51,7 +51,7 @@ Xếp hạng tạp chí và Impact Factor được tự động tích hợp ngay
 - **Đồng bộ màu sắc chuẩn**: Xanh lá đậm (Siêu tinh hoa IF >= 10.0), Xanh lá tươi (Q1 / IF >= 5.0), Vàng (Q2 / IF >= 3.0), Cam (Q3 / IF >= 1.5) và Đỏ (Q4).
 - **Liên kết DOI**: Bấm trực tiếp vào huy hiệu để mở bài báo gốc thông qua mã DOI.
 
-### 2. Khung thông tin học thuật chi tiết (Academic Card - "Kính chiếu yêu")
+### 2. Khung thông tin học thuật chi tiết (Academic Card Tooltip)
 Khi rê chuột lên bất kỳ huy hiệu Quartile hoặc Impact Factor nào, khung thông tin hiện đại sẽ lập tức xuất hiện:
 
 <p align="center">
@@ -60,7 +60,7 @@ Khi rê chuột lên bất kỳ huy hiệu Quartile hoặc Impact Factor nào, k
 
 - **Lưới chỉ số trọng yếu**: Thống kê nhanh Impact Factor, Quartile, Năm phát hành, Cơ sở dữ liệu và H-Index.
 - **Bóc tách chi tiết theo từng chuyên ngành (Column AG)**: Hiển thị thứ hạng chính xác trong ngành (ví dụ: `1/180`), phân vị JCI (ví dụ: `99.7%`) và phân hạng Q1–Q4 cho từng lĩnh vực.
-- **Hỗ trợ song ngữ (EN / VI)**: Chuyển đổi mượt mà giữa Tiếng Anh và Tiếng Việt, kèm tên gọi thân thuộc *(Kính chiếu yêu)* ở chế độ Tiếng Việt.
+- **Hỗ trợ song ngữ (EN / VI)**: Chuyển đổi mượt mà giữa Tiếng Anh và Tiếng Việt.
 
 ---
 
