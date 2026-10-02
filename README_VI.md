@@ -38,6 +38,32 @@ Extension sẽ **tự động** hiển thị các badge xếp hạng (SJR, Impac
 
 ---
 
+## 📸 Hình ảnh minh họa (Preview)
+
+Xếp hạng tạp chí và Impact Factor được tự động tích hợp ngay bên cạnh kết quả tìm kiếm trên Google Scholar với hệ thống badge trực quan và khung hiển thị chi tiết (HUD card).
+
+### 1. Huy hiệu trực tiếp trên kết quả tìm kiếm (Inline Badges)
+<p align="center">
+  <img src="./JQR-Scholar-Extension/img/preview.png" alt="JQR Scholar Extension hiển thị trên Google Scholar" width="850px" />
+</p>
+
+- **Huy hiệu tức thì**: Hiển thị `[Q1]`, `[Q2]`, `[Q3]`, `[IF: 48.9]`, `[IF: 2.1]`, `[BFI]`... ngay cạnh tên tạp chí.
+- **Đồng bộ màu sắc chuẩn**: Xanh lá đậm (Siêu tinh hoa IF >= 10.0), Xanh lá tươi (Q1 / IF >= 5.0), Vàng (Q2 / IF >= 3.0), Cam (Q3 / IF >= 1.5) và Đỏ (Q4).
+- **Liên kết DOI**: Bấm trực tiếp vào huy hiệu để mở bài báo gốc thông qua mã DOI.
+
+### 2. Khung thông tin học thuật chi tiết (Academic Card - "Kính chiếu yêu")
+Khi rê chuột lên bất kỳ huy hiệu Quartile hoặc Impact Factor nào, khung thông tin hiện đại sẽ lập tức xuất hiện:
+
+<p align="center">
+  <img src="./JQR-Scholar-Extension/img/preview_tooltip.png" alt="Khung thông tin học thuật Academic Card Tooltip" width="850px" />
+</p>
+
+- **Lưới chỉ số trọng yếu**: Thống kê nhanh Impact Factor, Quartile, Năm phát hành, Cơ sở dữ liệu và H-Index.
+- **Bóc tách chi tiết theo từng chuyên ngành (Column AG)**: Hiển thị thứ hạng chính xác trong ngành (ví dụ: `1/180`), phân vị JCI (ví dụ: `99.7%`) và phân hạng Q1–Q4 cho từng lĩnh vực.
+- **Hỗ trợ song ngữ (EN / VI)**: Chuyển đổi mượt mà giữa Tiếng Anh và Tiếng Việt, kèm tên gọi thân thuộc *(Kính chiếu yêu)* ở chế độ Tiếng Việt.
+
+---
+
 ## 🚀 Hướng dẫn cài đặt
 
 ### Cài trên Chrome / Edge / Brave

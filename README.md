@@ -28,15 +28,27 @@ A browser extension that displays **journal rankings and impact metrics** direct
 
 ## 📸 Preview
 
-Journal rankings appear automatically next to each Google Scholar result:
+Journal rankings and Impact Factors are directly added to Google Scholar search results with real-time badges and modern HUD tooltip cards.
 
-<img src="./JQR-Scholar-Extension/img/SJR_VHB.PNG" alt="SJR and VHB Scores" width="700">
+### 1. Inline Search Result Badges
+<p align="center">
+  <img src="./JQR-Scholar-Extension/img/preview.png" alt="JQR Scholar Extension in action on Google Scholar" width="850px" />
+</p>
 
-<br>
+- **Instant Badges**: Displays `[Q1]`, `[Q2]`, `[Q3]`, `[IF: 48.9]`, `[IF: 2.1]`, `[BFI]`, etc. directly beside search results.
+- **Harmonized Colors**: Color coding automatically reflects quality: Green (Q1 / IF >= 5.0), Yellow (Q2 / IF >= 3.0), Orange (Q3 / IF >= 1.5), and Red (Q4).
+- **DOI Link**: Clicking rankings navigates directly to the publication via its DOI.
 
-Hover over badges for detailed information:
+### 2. Academic Card Tooltip (UI/UX Pro Max)
+Hovering over any Quartile or Impact Factor badge instantly displays an interactive, glassmorphic inspection card:
 
-<img src="./JQR-Scholar-Extension/img/SJR_VHB_with%20mouseover.PNG" alt="Mouseover info" width="700">
+<p align="center">
+  <img src="./JQR-Scholar-Extension/img/preview_tooltip.png" alt="Academic Card Tooltip with full metrics breakdown" width="850px" />
+</p>
+
+- **Key Metrics Grid**: Shows Impact Factor, Quartile, Release Year, Database, and H-Index at a glance.
+- **Subject Categories & Rankings Breakdown**: Shows every official subject category with Quartile badge, Exact Rank within field (e.g. `1/180`), and JCI Percentile (e.g. `99.7%`).
+- **Bilingual Support (EN / VI)**: Clean toggle between English and Vietnamese, including playful subtitle *(Kính chiếu yêu)* in Vietnamese mode.
 
 ## 🚀 Installation
 
