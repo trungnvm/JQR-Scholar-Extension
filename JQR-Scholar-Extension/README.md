@@ -39,8 +39,13 @@ Building upon CCFrank and the original work by [Dr. Julian Wichmann](https://de.
 
 Journal rankings and Impact Factors are directly added to Google Scholar search results.
 
-- **Badges**: Displays `[Q1]`, `[Q2]`, `[IF: 3.1]`, `[CORE A*]`, `[CCF A]`, etc.
-- **Hover Tooltip**: Displays detailed metadata including Year, Source, Quartile, H-Index, and category percentiles.
+<p align="center">
+  <img src="./img/preview.png" alt="JQR Scholar Extension in action on Google Scholar" width="850px" />
+</p>
+
+- **Badges**: Displays `[Q1]`, `[Q2]`, `[Q3]`, `[IF: 48.9]`, `[IF: 2.1]`, `[BFI]`, etc. directly beside search results.
+- **Harmonized Colors**: Color coding automatically reflects quality: Green (Q1 / IF >= 5.0), Yellow (Q2 / IF >= 3.0), Orange (Q3 / IF >= 1.5), and Red (Q4).
+- **Hover Tooltip**: Displays detailed metadata including Year, Source, Quartile, H-Index, and multi-category percentiles.
 - **DOI Link**: Clicking rankings navigates directly to the publication via its DOI.
 
 ---
