@@ -6,12 +6,12 @@
   --d-color: #dc3545;
   --na-color: #a9a9a9;
 
-  /* Impact Factor colors */
-  --if-excellent: #00cc00;    /* IF >= 10: Green */
-  --if-verygood: #66cc00;     /* IF >= 5: Light green */
-  --if-good: #cccc00;         /* IF >= 3: Yellow */
-  --if-moderate: #ff9900;     /* IF >= 1: Orange */
-  --if-low: #ff6666;          /* IF < 1: Red */
+  /* Impact Factor colors (Synchronized with Quartile tiers) */
+  --if-excellent: var(--aplus-color); /* IF >= 10: Deep Green */
+  --if-verygood: var(--a-color);      /* IF >= 5: Green (Q1 tier) */
+  --if-good: var(--b-color);          /* IF >= 3: Yellow (Q2 tier) */
+  --if-moderate: var(--c-color);      /* IF >= 1.5: Orange (Q3 tier) */
+  --if-low: var(--d-color);           /* IF < 1.5: Red (Q4 tier) */
 
   /* Quartile-based IF colors (Synced with SJR colors) */
   --if-q1: var(--a-color);    /* #34ce57 */

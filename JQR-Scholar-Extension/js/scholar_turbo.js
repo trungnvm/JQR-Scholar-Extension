@@ -46,8 +46,9 @@ CircumventCrossRef = function (journal3, node, title, compl, scholar, elid, auth
     if (isLocalHit) {
         let doi = "";
         let issn1 = (ifData && ifData.issn) ? ifData.issn : "";
+        let issn2 = (ifData && ifData.eissn) ? ifData.eissn : "";
         for (let getRankSpan of scholar.rankSpanList) {
-            $(node).after(getRankSpan(journal3, "full_cap", doi, elid, issn1, "", "", "", settings));
+            $(node).after(getRankSpan(journal3, "full_cap", doi, elid, issn1, issn2, "", "", settings));
         }
         let spinner = document.getElementById(elid);
         if (spinner) spinner.remove();

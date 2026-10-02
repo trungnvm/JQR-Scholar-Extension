@@ -84,20 +84,28 @@ ccf.getRankInfo = function (refine, type, ISSN1, ISSN2, dblp_venue) {
         ISSN1 = ISSN1.replace(/[^A-Z0-9]/ig, "");
         issn = ISSN1;    
 
-        // let position_start = ccf.FullRank_ISSNs.indexOf("X_X" + issn + "\1/");
-        let position_start = ccf.issnSJR_Q[issn]; // we build the dataset from a csv file so if ANY rating exists there will be at least an entry with NA in all others
+        let hasRank = function(v) { return v !== undefined && v !== "" && v !== "NA"; };
+        let position_start = ccf.issnSJR_Q ? ccf.issnSJR_Q[issn] : undefined;
 
-        if (ISSN2 != "" && ISSN2 != undefined && position_start === undefined) {
-                
-            ISSN2 = ISSN2.toUpperCase(); 
-            ISSN2 = ISSN2.replace(/[^A-Z0-9]/ig, "");
-            issn = ISSN2; 
-                
-            // position_start = ccf.FullRank_ISSNs.indexOf("X_X" + issn + "\1/");
-            position_start = ccf.issnSJR_Q[issn]; 
+        if (ISSN2 != "" && ISSN2 != undefined && !hasRank(position_start)) {
+            ISSN2 = ISSN2.toUpperCase().replace(/[^A-Z0-9]/ig, "");
+            let pos2 = ccf.issnSJR_Q ? ccf.issnSJR_Q[ISSN2] : undefined;
+            if (hasRank(pos2)) {
+                issn = ISSN2;
+                position_start = pos2;
+            } else if (position_start === undefined && pos2 !== undefined) {
+                issn = ISSN2;
+                position_start = pos2;
+            }
+        }
+        if (!hasRank(position_start) && url != "" && url != undefined && ccf.SJR_Q) {
+            let posName = ccf.SJR_Q[url];
+            if (hasRank(posName)) {
+                position_start = undefined; // trigger name lookup branch below
+            }
         }
         if (position_start === undefined && url != "" && url != undefined) {
-            position_start = ccf.SJR_Q[url]; // we build the dataset from a csv file so if ANY rating exists there will be at least an entry with NA in all others
+            position_start = ccf.SJR_Q ? ccf.SJR_Q[url] : undefined;
             if (position_start !== undefined) { // single undefined check
                 sjrq2 = position_start || "NA"; // if the rating is an empty string, we replace it with NA
                 rankInfo.AllRanks.SJR_Q2 = sjrq2;
@@ -188,6 +196,9 @@ ccf.getRankInfo = function (refine, type, ISSN1, ISSN2, dblp_venue) {
             if (position_start !== undefined) {                
         
                 sjrq2 = position_start || "NA"; // if the rating is an empty string, we replace it with NA
+                if ((!hasRank(sjrq2) || sjrq2 === "NA") && url != "" && url != undefined && ccf.SJR_Q && hasRank(ccf.SJR_Q[url])) {
+                    sjrq2 = ccf.SJR_Q[url];
+                }
                 rankInfo.AllRanks.SJR_Q2 = sjrq2;
                 rankInfo.ranks.push(sjrq2);
         
@@ -549,15 +560,19 @@ ccf.getIFColorClass = function (ifData) {
         if (q.includes("Q4")) return "if-q4";
     }
 
-    let ifValue = parseFloat(ifData.value);
-    if (ifValue >= 10) {
-        return "if-excellent";  // Green
-    } else if (ifValue >= 3) {
-        return "if-verygood";   // Light green
-    } else if (ifValue >= 1) {
-        return "if-good";       // Yellow
+    let ifValue = parseFloat(ifData ? ifData.value : 0);
+    if (isNaN(ifValue)) return "if-low";
+
+    if (ifValue >= 10.0) {
+        return "if-excellent";  // Deep Green (aplus)
+    } else if (ifValue >= 5.0) {
+        return "if-verygood";   // Green (Q1 tier)
+    } else if (ifValue >= 3.0) {
+        return "if-good";       // Yellow (Q2 tier - synchronized with Q2)
+    } else if (ifValue >= 1.5) {
+        return "if-moderate";   // Orange (Q3 tier)
     } else {
-        return "if-low";        // Red
+        return "if-low";        // Red (Q4 tier)
     }
 };
 
@@ -630,15 +645,36 @@ ccf.getRankSpan = function (refine, type, doi, elid, ISSN1, ISSN2, dblp_venue, d
     let allNA = 1;
  
     let rankInfo = ccf.getRankInfo(refine, type, ISSN1, ISSN2, dblp_venue);
- 
+
+    // Look up Impact Factor early so JCR Quartile is available as fallback for Q badge
+    let ifData = ccf.getImpactFactor(ISSN1, ISSN2);
+    if (!ifData || !ifData.value) {
+        ifData = ccf.getImpactFactorByName(refine);
+    }
+
     let span1 = $("<span>");
     let rank = rankInfo.AllRanks.SJR_Q2;
-    if (rank != "NA" && rank != undefined) {
+    let isJCRQuartile = false;
+
+    // Fallback: If Scopus SJR Q is missing/NA, use JCR Quartile from ifData
+    if ((!rank || rank === "NA" || rank === "") && ifData && ifData.quartile) {
+        rank = ifData.quartile;
+        isJCRQuartile = true;
+        rankInfo.AllRanks.SJR_Q2 = rank;
+    }
+
+    if (rank != "NA" && rank != undefined && rank != "") {
         allNA = allNA + 1;
+        let qClass = "SJR_Q2_" + rank.replace(/[+*]/g, "plus").toLowerCase();
         span1
             .addClass("ccf-rank")
-            .addClass("SJR_Q2_" + rank.replace(/[+*]/g, "plus").toLowerCase() )
+            .addClass(qClass)
             .text(rank); 
+        if (isJCRQuartile) {
+            span1.attr("title", "JCR Quartile: " + rank + " (Clarivate Web of Science)");
+        } else {
+            span1.attr("title", "SJR Quartile: " + rank + " (Scopus)");
+        }
     }      
     
     let span2 = $("<span>");
@@ -763,10 +799,6 @@ ccf.getRankSpan = function (refine, type, doi, elid, ISSN1, ISSN2, dblp_venue, d
 
     // Impact Factor badge
     let span14 = $("<span>");
-    let ifData = ccf.getImpactFactor(ISSN1, ISSN2);
-    if (!ifData || !ifData.value) {
-        ifData = ccf.getImpactFactorByName(refine);
-    }
     if (ifData && ifData.value) {
         allNA = allNA + 1;
         span14 = ccf.getIFSpan(ifData);
@@ -795,13 +827,14 @@ ccf.getRankSpan = function (refine, type, doi, elid, ISSN1, ISSN2, dblp_venue, d
     let Ranks_chosen = [];
     let Ranks_additional = [];
     
+      let qLabel = isJCRQuartile ? "JCR Q: " : "SJR: ";
       if(settings.SJR === true) { 
           span123.append(span1); 
-          popup_text += "SJR: " + rankInfo.AllRanks.SJR_Q2 + "   ";
+          popup_text += qLabel + rankInfo.AllRanks.SJR_Q2 + "   ";
           Ranks_chosen.push(rankInfo.AllRanks.SJR_Q2); 
         } else { 
           span456.append(span1); 
-          popup_text_add += "SJR: " + rankInfo.AllRanks.SJR_Q2 + "   ";
+          popup_text_add += qLabel + rankInfo.AllRanks.SJR_Q2 + "   ";
           Ranks_additional.push(rankInfo.AllRanks.SJR_Q2); 
         }
 

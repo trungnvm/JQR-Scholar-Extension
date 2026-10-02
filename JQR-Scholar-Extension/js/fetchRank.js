@@ -84,8 +84,9 @@ function fetchRank(node, title, compl, site, elid, author, journal_hint, setting
                 let match = ccf.getImpactFactorByName(cleanHint);
                 if (match) {
                     let issn = match.issn || "";
+                    let eissn = match.eissn || "";
                     let full_name = match.name || cleanHint;
-                    proceedWithRendering(full_name, "", issn, "");
+                    proceedWithRendering(full_name, "", issn, eissn);
                     return;
                 }
             }
