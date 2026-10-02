@@ -578,7 +578,75 @@ ccf.getIFColorClass = function (ifData) {
 
 
 /**
- * Create Impact Factor badge span element
+ * Create modern UI/UX Pro Max Card Tooltip Element
+ * @param {object} options - Card options (title, subtitle, metrics, categories, note)
+ * @returns {jQuery}
+ */
+ccf.createTooltipCard = function (options) {
+    let card = $("<div>").addClass("ccf-tooltiptext");
+
+    // Card Header
+    if (options.title) {
+        let header = $("<div>").addClass("jqr-card-header");
+        header.append($("<div>").addClass("jqr-card-title").text(options.title));
+        if (options.subtitle) {
+            header.append($("<div>").addClass("jqr-card-sub").text(options.subtitle));
+        }
+        card.append(header);
+    }
+
+    // Key metrics grid (2-column layout)
+    if (options.metrics && options.metrics.length > 0) {
+        let grid = $("<div>").addClass("jqr-card-grid");
+        options.metrics.forEach(function (m) {
+            let item = $("<div>").addClass("jqr-metric-item");
+            item.append($("<span>").addClass("jqr-metric-label").text(m.label));
+            let val = $("<span>").addClass("jqr-metric-val").text(m.value);
+            if (m.colorClass) {
+                val.addClass(m.colorClass);
+            }
+            item.append(val);
+            grid.append(item);
+        });
+        card.append(grid);
+    }
+
+    // Categories and subject rankings breakdown
+    if (options.categories && options.categories.length > 0) {
+        card.append($("<div>").addClass("jqr-card-divider"));
+        let catSec = $("<div>").addClass("jqr-cat-section");
+        catSec.append($("<div>").addClass("jqr-cat-heading").text("Subject Categories & Rankings"));
+        let catList = $("<div>").addClass("jqr-cat-list");
+        options.categories.forEach(function (c) {
+            let catItem = $("<div>").addClass("jqr-cat-item");
+            catItem.append($("<span>").addClass("jqr-cat-name").text(c.cat));
+            let tags = $("<div>").addClass("jqr-cat-tags");
+            if (c.q) {
+                let qClass = "jqr-pill-" + c.q.toLowerCase();
+                tags.append($("<span>").addClass("jqr-pill " + qClass).text(c.q));
+            }
+            if (c.rank) {
+                tags.append($("<span>").addClass("jqr-pill jqr-pill-rank").text(c.rank));
+            }
+            if (c.pct) {
+                tags.append($("<span>").addClass("jqr-pill jqr-pill-pct").text(c.pct + "%"));
+            }
+            catItem.append(tags);
+            catList.append(catItem);
+        });
+        catSec.append(catList);
+        card.append(catSec);
+    }
+
+    if (options.note) {
+        card.append($("<div>").addClass("jqr-card-note").text(options.note));
+    }
+
+    return card;
+};
+
+/**
+ * Create Impact Factor badge span element with UI/UX Pro Max Card Tooltip
  * @param {object} ifData - Impact Factor data object
  * @returns {jQuery} Span element with IF badge
  */
@@ -590,39 +658,29 @@ ccf.getIFSpan = function (ifData) {
     let ifValue = parseFloat(ifData.value);
     let colorClass = ccf.getIFColorClass(ifData);
 
-    let tooltipText = "";
-    if (ifData.name) {
-        tooltipText += ifData.name + "\n";
+    let metrics = [
+        { label: "Impact Factor", value: ifValue.toFixed(1), colorClass: "jqr-val-highlight" },
+        { label: "Quartile", value: ifData.quartile || "N/A", colorClass: ifData.quartile ? "jqr-pill-" + ifData.quartile.toLowerCase() : "" },
+        { label: "Release Year", value: ifData.year ? ifData.year.toString() : "2025/2026" },
+        { label: "Database", value: ifData.source || "Clarivate JCR" }
+    ];
+    if (ifData.h_index && ifData.h_index !== "NA") {
+        metrics.push({ label: "H-Index", value: ifData.h_index.toString() });
     }
-    tooltipText += "Impact Factor: " + ifValue;
-    if (ifData.year) {
-        tooltipText += "\nYear: " + ifData.year;
-    }
-    if (ifData.source) {
-        tooltipText += "\nSource: " + ifData.source;
-    }
-    if (ifData.quartile) {
-        tooltipText += "\nQuartile: " + ifData.quartile;
-    }
-    if (ifData.h_index) {
-        tooltipText += "\nH-Index: " + ifData.h_index;
-    }
-    if (ifData.categories && ifData.categories.length > 0) {
-        tooltipText += "\nCategories:\n" + ifData.categories.map(function(c) {
-            let catStr = " • " + c.cat;
-            if (c.q) catStr += " (" + c.q;
-            if (c.rank) catStr += ", " + c.rank;
-            if (c.q) catStr += ")";
-            return catStr;
-        }).join("\n");
-    }
+
+    let tooltipCard = ccf.createTooltipCard({
+        title: ifData.name || "Academic Journal",
+        subtitle: "Clarivate Journal Citation Reports (JCR)",
+        metrics: metrics,
+        categories: ifData.categories
+    });
 
     let span = $("<span>")
         .addClass("ccf-rank if-badge")
         .addClass(colorClass)
         .text("IF: " + ifValue.toFixed(1))
         .addClass("ccf-tooltip")
-        .append($("<pre>").addClass("ccf-tooltiptext").text(tooltipText));
+        .append(tooltipCard);
 
     return span;
 };
@@ -670,25 +728,29 @@ ccf.getRankSpan = function (refine, type, doi, elid, ISSN1, ISSN2, dblp_venue, d
     if (rank != "NA" && rank != undefined && rank != "") {
         allNA = allNA + 1;
         let qClass = "SJR_Q2_" + rank.replace(/[+*]/g, "plus").toLowerCase();
-        let qTooltip = "";
-        if (refine) {
-            qTooltip += refine + "\n";
-        }
-        if (isJCRQuartile) {
-            qTooltip += "JCR Quartile: " + rank + " (Clarivate Web of Science)";
-        } else {
-            qTooltip += "SJR Quartile: " + rank + " (Scopus)";
-        }
+        let qMetrics = [
+            { label: "Quartile", value: rank, colorClass: "jqr-pill-" + rank.toLowerCase() },
+            { label: "Authority", value: isJCRQuartile ? "Clarivate (WoS)" : "Scopus (SJR)" }
+        ];
         if (rankInfo.AllRanks.SJR_H && rankInfo.AllRanks.SJR_H !== "NA") {
-            qTooltip += "\nH-Index: " + rankInfo.AllRanks.SJR_H;
+            qMetrics.push({ label: "H-Index", value: rankInfo.AllRanks.SJR_H.toString() });
         }
+        if (ifData && ifData.value) {
+            qMetrics.push({ label: "Impact Factor", value: ifData.value.toString() });
+        }
+
+        let qCard = ccf.createTooltipCard({
+            title: refine || "Academic Journal",
+            subtitle: isJCRQuartile ? "Clarivate Web of Science Ranking" : "Scopus SCImago Journal Rank",
+            metrics: qMetrics
+        });
 
         span1
             .addClass("ccf-rank")
             .addClass(qClass)
             .text(rank)
             .addClass("ccf-tooltip")
-            .append($("<pre>").addClass("ccf-tooltiptext").text(qTooltip));
+            .append(qCard);
     }      
     
     let span2 = $("<span>");
@@ -1043,12 +1105,17 @@ let additional = 0;
         // Individual badges (Q, IF, etc.) have their own dedicated tooltips, avoiding overlaps
     } else if ( (refine == "" && ISSN1 == "") || (Ranks_chosen.every(isundef)) ) {
         chosen = 0;
+        let naCard = ccf.createTooltipCard({
+            title: refine || "Academic Publication",
+            subtitle: "Index Status",
+            note: rankInfo.info || "No index ranking found for this venue"
+        });
         span123 = $("<span>")
             .addClass("ccf-rank")
             .text("NA")
             .addClass("ccf-none")
             .addClass("ccf-tooltip")
-            .append($("<pre>").addClass("ccf-tooltiptext").text(rankInfo.info || "No ranking found"));       
+            .append(naCard);       
     } 
 
     if  ( (!Ranks_additional.every(isundef)) ) {   
@@ -1056,12 +1123,17 @@ let additional = 0;
         // Individual badges have their own dedicated tooltips
     } else if ( (Ranks_additional.every(isundef)) ) {   
         additional = 0;
+        let naCardAdd = ccf.createTooltipCard({
+            title: refine || "Academic Publication",
+            subtitle: "Additional Rankings Status",
+            note: rankInfo.info || "No additional ranking found for this venue"
+        });
         span456 = $("<span id='add_rank'>")
             .addClass("ccf-rank")
             .addClass("ccf-none") 
             .text("NA")
             .addClass("ccf-tooltip")
-            .append($("<pre>").addClass("ccf-tooltiptext").text(rankInfo.info || "No ranking found")); 
+            .append(naCardAdd); 
     }   
     
     link_text = "https://doi.org/" + doi; 
