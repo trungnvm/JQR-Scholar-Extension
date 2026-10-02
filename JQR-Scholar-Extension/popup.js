@@ -82,7 +82,11 @@ function updateEnableAllState() {
   const autoExpand = document.getElementById('autoExpand').checked;
   const enableAllEl = document.getElementById('enableAll');
   if (enableAllEl) {
-    enableAllEl.checked = on_off && impactFactor && fieldClassification && autoExpand;
+    browserAPI.storage.local.get(null, function(items) {
+      items = items || {};
+      const allRankingsOn = rankingIds.every(id => items[id] !== false);
+      enableAllEl.checked = on_off && impactFactor && fieldClassification && autoExpand && allRankingsOn;
+    });
   }
 }
 
@@ -104,11 +108,10 @@ function onEnableAllChange() {
       language: currentLang
     };
 
-    if (isChecked) {
-      rankingIds.forEach(id => {
-        newSettings[id] = true;
-      });
-    }
+    // Synchronize ALL 12 ranking systems both when turning ON and OFF!
+    rankingIds.forEach(id => {
+      newSettings[id] = isChecked;
+    });
 
     browserAPI.storage.local.set(newSettings, function() {
       if (isChecked === false) {
@@ -202,14 +205,19 @@ function save_options() {
   const impactFactor = document.getElementById('impactFactor').checked;
   const fieldClassification = document.getElementById('fieldClassification').checked;
   const autoExpand = document.getElementById('autoExpand').checked;
-  updateEnableAllState();
-
-  const enableAll = document.getElementById('enableAll') ? document.getElementById('enableAll').checked : false;
 
   browserAPI.storage.local.get(null, function(items) {
+    items = items || {};
+    const allRankingsOn = rankingIds.every(id => items[id] !== false);
+    const allFeaturesOn = on_off && impactFactor && fieldClassification && autoExpand;
+    const isAllOn = allFeaturesOn && allRankingsOn;
+
+    const enableAllEl = document.getElementById('enableAll');
+    if (enableAllEl) enableAllEl.checked = isAllOn;
+
     const newSettings = {
       ...items,
-      enableAll: enableAll,
+      enableAll: isAllOn,
       ext_on: on_off,
       impactFactor: impactFactor,
       fieldClassification: fieldClassification,
@@ -231,29 +239,30 @@ function save_options() {
  * Restores state using the preferences stored in storage
  */
 function restore_options() {
-  browserAPI.storage.local.get({
-    enableAll: true,
-    ext_on: true,
-    impactFactor: true,
-    fieldClassification: true,
-    autoExpand: true,
-    language: 'vi'
-  }, function(items) {
-    document.getElementById('on').checked = items.ext_on;
-    document.getElementById('impactFactor').checked = items.impactFactor;
-    document.getElementById('fieldClassification').checked = items.fieldClassification;
-    document.getElementById('autoExpand').checked = items.autoExpand;
+  browserAPI.storage.local.get(null, function(items) {
+    items = items || {};
+    const ext_on = items.ext_on !== false;
+    const impactFactor = items.impactFactor !== false;
+    const fieldClassification = items.fieldClassification !== false;
+    const autoExpand = items.autoExpand !== false;
+
+    document.getElementById('on').checked = ext_on;
+    document.getElementById('impactFactor').checked = impactFactor;
+    document.getElementById('fieldClassification').checked = fieldClassification;
+    document.getElementById('autoExpand').checked = autoExpand;
+
+    const allRankingsOn = rankingIds.every(id => items[id] !== false);
+    const allFeaturesOn = ext_on && impactFactor && fieldClassification && autoExpand;
+    const isAllOn = allFeaturesOn && allRankingsOn;
 
     const enableAllEl = document.getElementById('enableAll');
     if (enableAllEl) {
-      enableAllEl.checked = (items.enableAll !== undefined) 
-        ? items.enableAll 
-        : (items.ext_on && items.impactFactor && items.fieldClassification && items.autoExpand);
+      enableAllEl.checked = isAllOn;
     }
 
     applyLanguage(items.language || 'vi');
 
-    if (items.ext_on === false) {
+    if (ext_on === false) {
       browserAPI.action.setBadgeText({ text: 'OFF' });
     } else {
       browserAPI.action.setBadgeText({ text: '' });

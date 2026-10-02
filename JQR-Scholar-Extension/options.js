@@ -178,11 +178,17 @@ function save_options() {
             }
         });
 
-        // Save 'Enable All' state (not used by extension logic, but good for UI consistency)
+        // Check if all rankings are enabled
+        const allRankingsChecked = rankingIds.every(id => {
+            const el = document.getElementById(id);
+            return el ? el.checked : false;
+        });
+
         const enableAllEl = document.getElementById('enableAll');
         if (enableAllEl) {
-            newSettings['enableAll'] = enableAllEl.checked;
+            enableAllEl.checked = allRankingsChecked;
         }
+        newSettings['enableAll'] = allRankingsChecked;
 
         browserAPI.storage.local.set(newSettings, function() {
             if (newSettings.ext_on === false) {
@@ -240,10 +246,11 @@ function restore_options() {
             }
         });
 
-        // Restore 'Enable All' toggle
+        // Restore 'Enable All' toggle strictly based on whether all rankings are checked
+        const allChecked = rankingIds.every(rid => items[rid] !== false);
         const enableAllEl = document.getElementById('enableAll');
-        if (enableAllEl && items['enableAll'] !== undefined) {
-            enableAllEl.checked = items['enableAll'];
+        if (enableAllEl) {
+            enableAllEl.checked = allChecked;
         }
 
         applyLanguage(items.language || 'vi');
