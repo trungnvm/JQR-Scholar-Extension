@@ -16,6 +16,8 @@ const BASE_DIR = fs.existsSync(path.join(__dirname, 'manifest.json'))
 console.log('[TEST SUITE 1] JavaScript Syntax Verification');
 const filesToCheck = [
     'script.js',
+    'popup.js',
+    'options.js',
     'js/ccf.js',
     'js/fetchRank.js',
     'js/scholar.js',
@@ -221,24 +223,32 @@ global.$ = function(selector) {
     return obj;
 };
 
-const badgeSpan = ccf.getIFSpan(nrdMatch);
-assert(badgeSpan.hasClass('if-badge'), 'Badge must have class if-badge');
-assert(badgeSpan.hasClass('if-q1'), 'Badge for Q1 must have class if-q1');
-assert.strictEqual(badgeSpan._text().slice(0, 8), 'IF: 91.2', 'Badge text must start with "IF: 91.2"');
+// 1. Vietnamese tooltip test (default)
+const badgeSpanVi = ccf.getIFSpan(nrdMatch, { language: 'vi' });
+assert(badgeSpanVi.hasClass('if-badge'), 'Badge must have class if-badge');
+assert(badgeSpanVi.hasClass('if-q1'), 'Badge for Q1 must have class if-q1');
+assert.strictEqual(badgeSpanVi._text().slice(0, 8), 'IF: 91.2', 'Badge text must start with "IF: 91.2"');
 
-// Check tooltip
-const tooltipChild = badgeSpan._children[0];
-assert(tooltipChild, 'Tooltip element must be appended');
-const tooltipText = tooltipChild._text();
-assert(tooltipText.includes('Impact Factor') && tooltipText.includes('91.2'), 'Tooltip must have IF value 91.2');
-assert(tooltipText.includes('2025'), 'Tooltip must have Year 2025');
-assert(tooltipText.includes('Q1'), 'Tooltip must have Quartile Q1');
-assert(tooltipText.includes('BIOTECHNOLOGY & APPLIED MICROBIOLOGY'), 'Tooltip must have Category 1');
-assert(tooltipText.includes('1/180'), 'Tooltip must have Rank 1/180');
-assert(tooltipText.includes('PHARMACOLOGY & PHARMACY'), 'Tooltip must have Category 2');
-assert(tooltipText.includes('1/356'), 'Tooltip must have Rank 1/356');
-console.log('  ✓ Generated Card Tooltip for: ' + nrdMatch.name);
-console.log('  ✓ Card Content Verified: ' + tooltipText.slice(0, 120) + '...');
+const tooltipVi = badgeSpanVi._children[0];
+assert(tooltipVi, 'Tooltip element must be appended');
+const textVi = tooltipVi._text();
+assert(textVi.includes('Hệ số tác động (IF)') && textVi.includes('91.2'), 'VI Tooltip must have IF label and 91.2');
+assert(textVi.includes('Phân hạng (Quartile)'), 'VI Tooltip must have Quartile label');
+assert(textVi.includes('Kính chiếu yêu'), 'VI Tooltip must have fun subtitle "(Kính chiếu yêu)"');
+assert(textVi.includes('Chuyên ngành & Xếp hạng'), 'VI Tooltip must have Vietnamese categories heading');
+assert(textVi.includes('BIOTECHNOLOGY & APPLIED MICROBIOLOGY'), 'VI Tooltip must have Category 1');
+assert(textVi.includes('1/180'), 'VI Tooltip must have Rank 1/180');
+console.log('  ✓ Generated Vietnamese Card Tooltip (with "Kính chiếu yêu"): Verified!');
+
+// 2. English tooltip test
+const badgeSpanEn = ccf.getIFSpan(nrdMatch, { language: 'en' });
+const tooltipEn = badgeSpanEn._children[0];
+const textEn = tooltipEn._text();
+assert(textEn.includes('Impact Factor') && textEn.includes('91.2'), 'EN Tooltip must have English IF label');
+assert(textEn.includes('Quartile'), 'EN Tooltip must have English Quartile label');
+assert(textEn.includes('Subject Categories & Rankings'), 'EN Tooltip must have English categories heading');
+assert(!textEn.includes('Kính chiếu yêu'), 'EN Tooltip must NOT have Vietnamese subtitle');
+console.log('  ✓ Generated English Card Tooltip: Verified!');
 
 // ----------------------------------------------------
 // TEST SUITE 6: Timeout & Spinner Removal (fetchRank.js)

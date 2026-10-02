@@ -30,6 +30,7 @@ loadSettings().then(function(items) {
     settings.ext_on = items.ext_on ?? true;
     settings.fieldClassification = items.fieldClassification ?? true;
     settings.impactFactor = items.impactFactor ?? true;
+    settings.language = items.language || 'vi';
 
     if(settings.ext_on === true) {
         if(settings.turbo === true) {

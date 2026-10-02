@@ -28,6 +28,111 @@ document.getElementById('refresh').addEventListener('click', function() {
   });
 });
 
+const i18n = {
+  en: {
+    appTitle: "Journals Quality",
+    funSubtitle: "",
+    showFunSubtitle: false,
+    txtFeatures: "Features",
+    lblEnable: "Enable JQR",
+    subEnable: "Show rankings globally",
+    lblIf: "Impact Factor",
+    subIf: "Show JCR/SJR metrics",
+    lblField: "Field Classification",
+    subField: "Automatic detection",
+    lblExpand: "Auto Expand",
+    subExpand: "Show all by default",
+    txtSearch: "Journal Search",
+    searchPlaceholder: "Search for a journal...",
+    settingsLink: "Advanced Settings"
+  },
+  vi: {
+    appTitle: "Journals Quality",
+    funSubtitle: "(Kính chiếu yêu)",
+    showFunSubtitle: true,
+    txtFeatures: "Tính năng",
+    lblEnable: "Bật JQR",
+    subEnable: "Hiển thị thứ hạng toàn diện",
+    lblIf: "Hệ số tác động (IF)",
+    subIf: "Hiển thị chỉ số JCR / SJR",
+    lblField: "Phân loại chuyên ngành",
+    subField: "Tự động nhận diện lĩnh vực nghiên cứu",
+    lblExpand: "Tự động mở rộng",
+    subExpand: "Mặc định mở đầy đủ thứ hạng",
+    txtSearch: "Tra cứu tạp chí",
+    searchPlaceholder: "Nhập tên tạp chí hoặc ISSN...",
+    settingsLink: "Cài đặt nâng cao"
+  }
+};
+
+let currentLang = 'vi';
+
+function applyLanguage(lang) {
+  currentLang = lang === 'en' ? 'en' : 'vi';
+  const t = i18n[currentLang];
+
+  const appTitleEl = document.getElementById('app_title');
+  if (appTitleEl) appTitleEl.textContent = t.appTitle;
+
+  const funSubEl = document.getElementById('sub_fun_label');
+  if (funSubEl) {
+    if (t.showFunSubtitle) {
+      funSubEl.textContent = t.funSubtitle;
+      funSubEl.style.display = 'inline-block';
+    } else {
+      funSubEl.style.display = 'none';
+    }
+  }
+
+  const txtFeaturesEl = document.getElementById('txt_features');
+  if (txtFeaturesEl) txtFeaturesEl.textContent = t.txtFeatures;
+
+  const lblEnableEl = document.getElementById('lbl_enable');
+  if (lblEnableEl) lblEnableEl.textContent = t.lblEnable;
+
+  const subEnableEl = document.getElementById('sub_enable');
+  if (subEnableEl) subEnableEl.textContent = t.subEnable;
+
+  const lblIfEl = document.getElementById('lbl_if');
+  if (lblIfEl) lblIfEl.textContent = t.lblIf;
+
+  const subIfEl = document.getElementById('sub_if');
+  if (subIfEl) subIfEl.textContent = t.subIf;
+
+  const lblFieldEl = document.getElementById('lbl_field');
+  if (lblFieldEl) lblFieldEl.textContent = t.lblField;
+
+  const subFieldEl = document.getElementById('sub_field');
+  if (subFieldEl) subFieldEl.textContent = t.subField;
+
+  const lblExpandEl = document.getElementById('lbl_expand');
+  if (lblExpandEl) lblExpandEl.textContent = t.lblExpand;
+
+  const subExpandEl = document.getElementById('sub_expand');
+  if (subExpandEl) subExpandEl.textContent = t.subExpand;
+
+  const txtSearchEl = document.getElementById('txt_search');
+  if (txtSearchEl) txtSearchEl.textContent = t.txtSearch;
+
+  const searchInputEl = document.getElementById('journal_query');
+  if (searchInputEl) searchInputEl.setAttribute('placeholder', t.searchPlaceholder);
+
+  const settingsLinkEl = document.getElementById('settings_link');
+  if (settingsLinkEl) settingsLinkEl.textContent = t.settingsLink;
+
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === currentLang);
+  });
+}
+
+function setLanguage(lang) {
+  applyLanguage(lang);
+  browserAPI.storage.local.get(null, function(items) {
+    const newSettings = { ...items, language: currentLang };
+    browserAPI.storage.local.set(newSettings);
+  });
+}
+
 /**
  * Saves options to storage
  * This only handles the simplified toggle switches in the popup.
@@ -45,7 +150,8 @@ function save_options() {
       ext_on: on_off,
       impactFactor: impactFactor,
       fieldClassification: fieldClassification,
-      autoExpand: autoExpand
+      autoExpand: autoExpand,
+      language: currentLang
     };
 
     browserAPI.storage.local.set(newSettings, function() {
@@ -66,12 +172,14 @@ function restore_options() {
     ext_on: true,
     impactFactor: true,
     fieldClassification: true,
-    autoExpand: true
+    autoExpand: true,
+    language: 'vi'
   }, function(items) {
     document.getElementById('on').checked = items.ext_on;
     document.getElementById('impactFactor').checked = items.impactFactor;
     document.getElementById('fieldClassification').checked = items.fieldClassification;
     document.getElementById('autoExpand').checked = items.autoExpand;
+    applyLanguage(items.language || 'vi');
 
     if (items.ext_on === false) {
       browserAPI.action.setBadgeText({ text: 'OFF' });
@@ -86,6 +194,12 @@ document.getElementById('on').addEventListener('change', save_options);
 document.getElementById('impactFactor').addEventListener('change', save_options);
 document.getElementById('fieldClassification').addEventListener('change', save_options);
 document.getElementById('autoExpand').addEventListener('change', save_options);
+
+// Event Listeners for Language Switcher
+const langEnBtn = document.getElementById('lang_en');
+if (langEnBtn) langEnBtn.addEventListener('click', () => setLanguage('en'));
+const langViBtn = document.getElementById('lang_vi');
+if (langViBtn) langViBtn.addEventListener('click', () => setLanguage('vi'));
 
 document.addEventListener('DOMContentLoaded', restore_options);
 

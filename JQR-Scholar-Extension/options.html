@@ -17,115 +17,124 @@
     <header>
       <div class="logo-title">
         <span class="logo">JQR</span>
-        <h1>Settings</h1>
+        <div class="title-wrap">
+          <h1 id="opt_title">Settings</h1>
+          <span class="sub-fun-label" id="opt_fun_label" style="display: none;">(Kính chiếu yêu)</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div class="lang-switch" id="lang_switch">
+          <button type="button" class="lang-btn" id="lang_en" data-lang="en">EN</button>
+          <button type="button" class="lang-btn" id="lang_vi" data-lang="vi">VI</button>
+        </div>
       </div>
     </header>
 
-    <div class="header-info">
+    <div class="header-info" id="opt_header_info">
       Customize which rankings appear in Google Scholar. We recommend enabling CORE for CS, SJR/BFI for broad coverage, and domain-specific lists like ABDC/VHB for Economics.
     </div>
 
     <main>
         <div class="card">
-            <div class="card-header">Core Features</div>
+            <div class="card-header" id="hdr_core">Core Features</div>
 
             <div class="control-group">
-                <div class="control-label">Enable JQR<p>Turn extension on/off</p></div>
+                <div class="control-label" id="grp_on"><span id="lbl_on">Enable JQR</span><p id="sub_on">Turn extension on/off</p></div>
                 <label class="switch"><input type="checkbox" id="on"><span class="slider"></span></label>
             </div>
 
             <div class="control-group">
-                <div class="control-label">Turbo Mode<p>Direct title crawling (faster but may trigger CAPTCHA)</p></div>
+                <div class="control-label" id="grp_turbo"><span id="lbl_turbo">Turbo Mode</span><p id="sub_turbo">Direct title crawling (faster but may trigger CAPTCHA)</p></div>
                 <label class="switch"><input type="checkbox" id="turbo"><span class="slider"></span></label>
             </div>
 
             <div class="control-group">
-                <div class="control-label">Field Classification (Beta)<p>Auto-detect research fields</p></div>
+                <div class="control-label" id="grp_field"><span id="lbl_field">Field Classification</span><p id="sub_field">Auto-detect research fields</p></div>
                 <label class="switch"><input type="checkbox" id="fieldClassification"><span class="slider"></span></label>
             </div>
 
             <div class="control-group">
-                <div class="control-label">Impact Factor<p>Show JIF/SJR metrics</p></div>
+                <div class="control-label" id="grp_if"><span id="lbl_if">Impact Factor</span><p id="sub_if">Show JIF/SJR metrics</p></div>
                 <label class="switch"><input type="checkbox" id="impactFactor"><span class="slider"></span></label>
             </div>
 
             <div class="control-group">
-                <div class="control-label">Auto Expand<p>Show all rankings by default</p></div>
+                <div class="control-label" id="grp_expand"><span id="lbl_expand">Auto Expand</span><p id="sub_expand">Show all rankings by default</p></div>
                 <label class="switch"><input type="checkbox" id="autoExpand"><span class="slider"></span></label>
             </div>
         </div>
 
         <div class="card">
-            <div class="card-header">Select Rankings</div>
+            <div class="card-header" id="hdr_rankings">Select Rankings</div>
 
             <div class="control-group">
-                <div class="control-label">Enable All<p>Select all rankings below</p></div>
+                <div class="control-label" id="grp_enableAll"><span id="lbl_enableAll">Enable All</span><p id="sub_enableAll">Select all rankings below</p></div>
                 <label class="switch"><input type="checkbox" id="enableAll"><span class="slider"></span></label>
             </div>
 
             <div class="control-group">
-                <div class="control-label">ABDC<p>Australian Business Deans Council</p></div>
+                <div class="control-label">ABDC<p id="sub_abdc">Australian Business Deans Council</p></div>
                 <label class="switch"><input type="checkbox" id="ABDC"><span class="slider"></span></label>
             </div>
 
             <div class="control-group">
-                <div class="control-label">AJG (ABS)<p>Academic Journal Guide</p></div>
+                <div class="control-label">AJG (ABS)<p id="sub_ajg">Academic Journal Guide</p></div>
                 <label class="switch"><input type="checkbox" id="AJG"><span class="slider"></span></label>
             </div>
 
             <div class="control-group">
-                <div class="control-label">BFI<p>Danish Ministry Ranking</p></div>
+                <div class="control-label">BFI<p id="sub_bfi">Danish Ministry Ranking</p></div>
                 <label class="switch"><input type="checkbox" id="DAEN"><span class="slider"></span></label>
             </div>
 
             <div class="control-group">
-                <div class="control-label">CCF<p>China Computer Federation</p></div>
+                <div class="control-label">CCF<p id="sub_ccf">China Computer Federation</p></div>
                 <label class="switch"><input type="checkbox" id="CCF"><span class="slider"></span></label>
             </div>
 
             <div class="control-group">
-                <div class="control-label">CNRS<p>Economics & Management</p></div>
+                <div class="control-label">CNRS<p id="sub_cnrs">Economics & Management</p></div>
                 <label class="switch"><input type="checkbox" id="CoNRS"><span class="slider"></span></label>
             </div>
 
             <div class="control-group">
-                <div class="control-label">CORE<p>Computing Research & Education</p></div>
+                <div class="control-label">CORE<p id="sub_core">Computing Research & Education</p></div>
                 <label class="switch"><input type="checkbox" id="CORE"><span class="slider"></span></label>
             </div>
 
             <div class="control-group">
-                <div class="control-label">FNEGE<p>Management Sciences</p></div>
+                <div class="control-label">FNEGE<p id="sub_fnege">Management Sciences</p></div>
                 <label class="switch"><input type="checkbox" id="FNEGE"><span class="slider"></span></label>
             </div>
 
             <div class="control-group">
-                <div class="control-label">FT50<p>Financial Times Top 50</p></div>
+                <div class="control-label">FT50<p id="sub_ft50">Financial Times Top 50</p></div>
                 <label class="switch"><input type="checkbox" id="FT50"><span class="slider"></span></label>
             </div>
 
             <div class="control-group">
-                <div class="control-label">HCERES<p>Social Sciences & Humanities</p></div>
+                <div class="control-label">HCERES<p id="sub_hceres">Social Sciences & Humanities</p></div>
                 <label class="switch"><input type="checkbox" id="HCERE"><span class="slider"></span></label>
             </div>
 
             <div class="control-group">
-                <div class="control-label">SJR<p>SCImago Journal Rank</p></div>
+                <div class="control-label">SJR<p id="sub_sjr">SCImago Journal Rank</p></div>
                 <label class="switch"><input type="checkbox" id="SJR"><span class="slider"></span></label>
             </div>
 
             <div class="control-group">
-                <div class="control-label">VHB<p>Business Administration</p></div>
+                <div class="control-label">VHB<p id="sub_vhb">Business Administration</p></div>
                 <label class="switch"><input type="checkbox" id="VHB"><span class="slider"></span></label>
             </div>
 
             <div class="control-group">
-                <div class="control-label">VHB4<p>VHB 4th Edition</p></div>
+                <div class="control-label">VHB4<p id="sub_vhb4">VHB 4th Edition</p></div>
                 <label class="switch"><input type="checkbox" id="VHB4"><span class="slider"></span></label>
             </div>
         </div>
 
         <div class="card">
-            <div class="card-header">Journal Search</div>
+            <div class="card-header" id="hdr_search">Journal Search</div>
             <form id="joursearch_form" class="search-container">
                 <input type="text" id="journal_query" placeholder="Search for a journal...">
                 <button type="submit" class="search-btn">
@@ -137,8 +146,8 @@
 
     <footer>
         <div class="footer-links">
-            <span class="version">JQR Extension v1.1</span>
-            <a href="https://buymeacoffee.com/trungnvm" target="_blank" style="margin-top: 5px; font-size: 12px; color: #FF813F; font-weight: bold; text-decoration: none; display: flex; align-items: center; gap: 4px;">
+            <span class="version" id="lbl_version">JQR Extension v1.1</span>
+            <a href="https://buymeacoffee.com/trungnvm" target="_blank" id="lbl_coffee" style="margin-top: 5px; font-size: 12px; color: #FF813F; font-weight: bold; text-decoration: none; display: flex; align-items: center; gap: 4px;">
                 <span>☕</span> Buy me a coffee
             </a>
         </div>

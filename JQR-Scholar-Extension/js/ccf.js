@@ -577,9 +577,42 @@ ccf.getIFColorClass = function (ifData) {
 };
 
 
+ccf.i18n = {
+    en: {
+        impactFactor: "Impact Factor",
+        quartile: "Quartile",
+        releaseYear: "Release Year",
+        database: "Database",
+        authority: "Authority",
+        hIndex: "H-Index",
+        categoriesHeader: "Subject Categories & Rankings",
+        jcrSubtitle: "Clarivate Journal Citation Reports (JCR)",
+        wosSubtitle: "Clarivate Web of Science Ranking",
+        scopusSubtitle: "Scopus SCImago Journal Rank",
+        funSubtitle: "",
+        noRanking: "No ranking found for",
+        defaultJournal: "Academic Journal"
+    },
+    vi: {
+        impactFactor: "Hệ số tác động (IF)",
+        quartile: "Phân hạng (Quartile)",
+        releaseYear: "Năm công bố",
+        database: "Cơ sở dữ liệu",
+        authority: "Tổ chức đánh giá",
+        hIndex: "Chỉ số H-Index",
+        categoriesHeader: "Chuyên ngành & Xếp hạng",
+        jcrSubtitle: "Báo cáo Trích dẫn Clarivate JCR (Kính chiếu yêu)",
+        wosSubtitle: "Bảng xếp hạng Clarivate WoS (Kính chiếu yêu)",
+        scopusSubtitle: "Bảng xếp hạng Scopus SCImago (Kính chiếu yêu)",
+        funSubtitle: "(Kính chiếu yêu)",
+        noRanking: "Không tìm thấy xếp hạng cho",
+        defaultJournal: "Tạp chí khoa học"
+    }
+};
+
 /**
  * Create modern UI/UX Pro Max Card Tooltip Element
- * @param {object} options - Card options (title, subtitle, metrics, categories, note)
+ * @param {object} options - Card options (title, subtitle, metrics, categories, categoriesHeader, note)
  * @returns {jQuery}
  */
 ccf.createTooltipCard = function (options) {
@@ -615,7 +648,7 @@ ccf.createTooltipCard = function (options) {
     if (options.categories && options.categories.length > 0) {
         card.append($("<div>").addClass("jqr-card-divider"));
         let catSec = $("<div>").addClass("jqr-cat-section");
-        catSec.append($("<div>").addClass("jqr-cat-heading").text("Subject Categories & Rankings"));
+        catSec.append($("<div>").addClass("jqr-cat-heading").text(options.categoriesHeader || "Subject Categories & Rankings"));
         let catList = $("<div>").addClass("jqr-cat-list");
         options.categories.forEach(function (c) {
             let catItem = $("<div>").addClass("jqr-cat-item");
@@ -648,31 +681,36 @@ ccf.createTooltipCard = function (options) {
 /**
  * Create Impact Factor badge span element with UI/UX Pro Max Card Tooltip
  * @param {object} ifData - Impact Factor data object
+ * @param {object} settings - User settings object (optional)
  * @returns {jQuery} Span element with IF badge
  */
-ccf.getIFSpan = function (ifData) {
+ccf.getIFSpan = function (ifData, settings) {
     if (!ifData || !ifData.value) {
         return $("<span>");  // Return empty span if no data
     }
+
+    let lang = (settings && settings.language === 'en') ? 'en' : 'vi';
+    let t = ccf.i18n[lang] || ccf.i18n.vi;
 
     let ifValue = parseFloat(ifData.value);
     let colorClass = ccf.getIFColorClass(ifData);
 
     let metrics = [
-        { label: "Impact Factor", value: ifValue.toFixed(1), colorClass: "jqr-val-highlight" },
-        { label: "Quartile", value: ifData.quartile || "N/A", colorClass: ifData.quartile ? "jqr-pill-" + ifData.quartile.toLowerCase() : "" },
-        { label: "Release Year", value: ifData.year ? ifData.year.toString() : "2025/2026" },
-        { label: "Database", value: ifData.source || "Clarivate JCR" }
+        { label: t.impactFactor, value: ifValue.toFixed(1), colorClass: "jqr-val-highlight" },
+        { label: t.quartile, value: ifData.quartile || "N/A", colorClass: ifData.quartile ? "jqr-pill-" + ifData.quartile.toLowerCase() : "" },
+        { label: t.releaseYear, value: ifData.year ? ifData.year.toString() : "2025/2026" },
+        { label: t.database, value: ifData.source || "Clarivate JCR" }
     ];
     if (ifData.h_index && ifData.h_index !== "NA") {
-        metrics.push({ label: "H-Index", value: ifData.h_index.toString() });
+        metrics.push({ label: t.hIndex, value: ifData.h_index.toString() });
     }
 
     let tooltipCard = ccf.createTooltipCard({
-        title: ifData.name || "Academic Journal",
-        subtitle: "Clarivate Journal Citation Reports (JCR)",
+        title: ifData.name || t.defaultJournal,
+        subtitle: t.jcrSubtitle,
         metrics: metrics,
-        categories: ifData.categories
+        categories: ifData.categories,
+        categoriesHeader: t.categoriesHeader
     });
 
     let span = $("<span>")
@@ -725,23 +763,26 @@ ccf.getRankSpan = function (refine, type, doi, elid, ISSN1, ISSN2, dblp_venue, d
         rankInfo.AllRanks.SJR_Q2 = rank;
     }
 
+    let lang = (settings && settings.language === 'en') ? 'en' : 'vi';
+    let t = ccf.i18n[lang] || ccf.i18n.vi;
+
     if (rank != "NA" && rank != undefined && rank != "") {
         allNA = allNA + 1;
         let qClass = "SJR_Q2_" + rank.replace(/[+*]/g, "plus").toLowerCase();
         let qMetrics = [
-            { label: "Quartile", value: rank, colorClass: "jqr-pill-" + rank.toLowerCase() },
-            { label: "Authority", value: isJCRQuartile ? "Clarivate (WoS)" : "Scopus (SJR)" }
+            { label: t.quartile, value: rank, colorClass: "jqr-pill-" + rank.toLowerCase() },
+            { label: t.authority, value: isJCRQuartile ? "Clarivate (WoS)" : "Scopus (SJR)" }
         ];
         if (rankInfo.AllRanks.SJR_H && rankInfo.AllRanks.SJR_H !== "NA") {
-            qMetrics.push({ label: "H-Index", value: rankInfo.AllRanks.SJR_H.toString() });
+            qMetrics.push({ label: t.hIndex, value: rankInfo.AllRanks.SJR_H.toString() });
         }
         if (ifData && ifData.value) {
-            qMetrics.push({ label: "Impact Factor", value: ifData.value.toString() });
+            qMetrics.push({ label: t.impactFactor, value: ifData.value.toString() });
         }
 
         let qCard = ccf.createTooltipCard({
-            title: refine || "Academic Journal",
-            subtitle: isJCRQuartile ? "Clarivate Web of Science Ranking" : "Scopus SCImago Journal Rank",
+            title: refine || t.defaultJournal,
+            subtitle: isJCRQuartile ? t.wosSubtitle : t.scopusSubtitle,
             metrics: qMetrics
         });
 
@@ -913,7 +954,7 @@ ccf.getRankSpan = function (refine, type, doi, elid, ISSN1, ISSN2, dblp_venue, d
     let span14 = $("<span>");
     if (ifData && ifData.value) {
         allNA = allNA + 1;
-        span14 = ccf.getIFSpan(ifData);
+        span14 = ccf.getIFSpan(ifData, settings);
     }
 
 

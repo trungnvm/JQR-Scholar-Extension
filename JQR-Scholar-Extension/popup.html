@@ -11,21 +11,30 @@
     <header>
       <div class="logo-title">
         <span class="logo">JQR</span>
-        <h1>Journals Quality</h1>
+        <div class="title-wrap">
+          <h1 id="app_title">Journals Quality</h1>
+          <span class="sub-fun-label" id="sub_fun_label" style="display: none;">(Kính chiếu yêu)</span>
+        </div>
       </div>
-      <button id="refresh" class="icon-btn" title="Refresh Page">
-        <img src="./icon/refresh.png" alt="Refresh">
-      </button>
+      <div class="header-actions">
+        <div class="lang-switch" id="lang_switch">
+          <button type="button" class="lang-btn" id="lang_en" data-lang="en">EN</button>
+          <button type="button" class="lang-btn" id="lang_vi" data-lang="vi">VI</button>
+        </div>
+        <button id="refresh" class="icon-btn" title="Refresh Page">
+          <img src="./icon/refresh.png" alt="Refresh">
+        </button>
+      </div>
     </header>
 
     <main>
       <div class="card">
-        <div class="card-header">Features</div>
+        <div class="card-header" id="txt_features">Features</div>
 
         <div class="control-group">
-          <div class="control-label">
-            Enable JQR
-            <p>Show rankings globally</p>
+          <div class="control-label" id="grp_enable">
+            <span id="lbl_enable">Enable JQR</span>
+            <p id="sub_enable">Show rankings globally</p>
           </div>
           <label class="switch">
             <input type="checkbox" id="on" checked>
@@ -34,9 +43,9 @@
         </div>
 
         <div class="control-group">
-          <div class="control-label">
-            Impact Factor
-            <p>Show JCR/SJR metrics</p>
+          <div class="control-label" id="grp_if">
+            <span id="lbl_if">Impact Factor</span>
+            <p id="sub_if">Show JCR/SJR metrics</p>
           </div>
           <label class="switch">
             <input type="checkbox" id="impactFactor" checked>
@@ -45,9 +54,9 @@
         </div>
 
         <div class="control-group">
-          <div class="control-label">
-            Field Classification
-            <p>Automatic detection</p>
+          <div class="control-label" id="grp_field">
+            <span id="lbl_field">Field Classification</span>
+            <p id="sub_field">Automatic detection</p>
           </div>
           <label class="switch">
             <input type="checkbox" id="fieldClassification" checked>
@@ -56,9 +65,9 @@
         </div>
 
         <div class="control-group">
-          <div class="control-label">
-            Auto Expand
-            <p>Show all by default</p>
+          <div class="control-label" id="grp_expand">
+            <span id="lbl_expand">Auto Expand</span>
+            <p id="sub_expand">Show all by default</p>
           </div>
           <label class="switch">
             <input type="checkbox" id="autoExpand" checked>
@@ -68,7 +77,7 @@
       </div>
 
       <div class="card">
-        <div class="card-header">Journal Search</div>
+        <div class="card-header" id="txt_search">Journal Search</div>
         <form id="joursearch_form" class="search-container">
           <input type="text" id="journal_query" placeholder="Search for a journal..." autocomplete="off">
           <button type="submit" class="search-btn">
