@@ -4,17 +4,22 @@ This directory contains Impact Factor data for journals displayed by the extensi
 
 ## File Structure
 
-### impact_factors.js
+### impact_factors.js & impact_factors_names.js
 
-This file contains Impact Factor data indexed by ISSN. Each entry includes:
+- `impact_factors.js`: Contains Impact Factor data indexed by 8-character clean ISSN/eISSN (39,900+ entries).
+- `impact_factors_names.js`: Contains Impact Factor data indexed by normalized journal names and aliases (70,200+ entries).
+- Data source: Clarivate JCR (Journal Citation Reports) updated with `2026-newJCRimpactfactor.xlsx` (2025 JCR release metrics).
+- Regeneration script: `utils/update_jcr_2026.py`
+
+Each entry includes:
 
 ```javascript
 "ISSN": {
-    "value": 5.2,        // Impact Factor value
-    "year": 2023,        // Year of the Impact Factor
-    "source": "JCR",     // Source (e.g., JCR, Scopus)
-    "quartile": "Q1",    // Journal quartile
-    "h_index": 45        // Journal h-index
+    "value": "109.0",     // Impact Factor value
+    "year": 2025,         // JCR Year
+    "source": "JCR",      // Source
+    "quartile": "Q1",     // Journal quartile
+    "name": "LANCET"      // Journal name
 }
 ```
 

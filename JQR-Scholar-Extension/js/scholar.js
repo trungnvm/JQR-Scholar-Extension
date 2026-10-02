@@ -79,6 +79,26 @@ function createFieldBadge(field) {
 }
 // ============================================================================
 
+// Helper function to robustly extract journal name from div.gs_a text
+function extractJournalInfo(gs_a_text) {
+    if (!gs_a_text) return { name: "", hasEllipsis: false };
+    // Normalize special whitespaces and non-breaking spaces (\u00A0)
+    let cleanText = gs_a_text.replace(/[\u00A0\u1680\u2000-\u200a\u202f\u205f\u3000]/g, " ").trim();
+    let parts = cleanText.split(/\s+[-–—]\s+/);
+    if (parts.length >= 2) {
+        let venuePart = parts[1].trim();
+        // If venuePart is just a 4-digit year, there's no venue name
+        if (/^\d{4}$/.test(venuePart)) {
+            return { name: "", hasEllipsis: false };
+        }
+        let hasEllipsis = venuePart.includes("…") || venuePart.includes("...");
+        let jName = venuePart.replace(/,\s*\d{4}(\s*[-–—].*)?$/, "").replace(/\s+\d{4}$/, "").trim();
+        jName = jName.replace(/[…\.]+$/, "").trim();
+        return { name: jName, hasEllipsis: hasEllipsis };
+    }
+    return { name: "", hasEllipsis: false };
+}
+
 CircumventCrossRef = function (journal3, node, title, compl, scholar, elid, author, settings) {
     let url;
 
@@ -97,17 +117,10 @@ CircumventCrossRef = function (journal3, node, title, compl, scholar, elid, auth
     // ========================================================================
     let detectedField = null;
 
-    // Only perform field detection if enabled and FieldDetector is available
     if (fieldDetectionEnabled && fieldDetector) {
         try {
-            // Call FieldDetector to identify the field based on journal name
-            // ISSN is not available at this stage (only journal name from metadata)
             detectedField = fieldDetector.detectField(journal3, null);
-
             if (detectedField && detectedField !== 'unknown') {
-                console.log('[Scholar Field Detection] Detected field for "' + journal3 + '": ' + detectedField);
-
-                // Display field badge before ranking badges (optional feature)
                 if (settings && settings.showFieldBadge !== false) {
                     const fieldBadge = createFieldBadge(detectedField);
                     if (fieldBadge) {
@@ -116,39 +129,69 @@ CircumventCrossRef = function (journal3, node, title, compl, scholar, elid, auth
                 }
             }
         } catch (error) {
-            console.warn('[Scholar Field Detection] Error detecting field:', error);
             detectedField = null;
         }
     }
     // ========================================================================
 
-    let position_start = ccf.FullRank_Names.indexOf("X_X" + url + "\1/");
+    // 1. Check Local Dictionaries First (0ms, no network, no rate-limit!)
+    let position_start = (typeof ccf.FullRank_Names !== 'undefined') ? ccf.FullRank_Names.indexOf("X_X" + url + "\1/") : -1;
+    let ifData = (typeof ccf.getImpactFactorByName === 'function') ? ccf.getImpactFactorByName(journal3) : null;
+    let isLocalHit = (position_start != -1) || (ifData && ifData.value);
 
-    if (position_start != -1) {
+    if (isLocalHit) {
+        let doi = "";
+        let issn1 = (ifData && ifData.issn) ? ifData.issn : "";
         for (let getRankSpan of scholar.rankSpanList) {
-                let doi = "";
-                // Pass detected field to getRankSpan function for field-aware ranking
-                $(node).after(getRankSpan(journal3, "full_cap", doi, elid, "", "", "", "", settings, detectedField)); }
-    } else {
-        fetchRank(node, title, compl, scholar, elid, author, settings, detectedField);
+            $(node).after(getRankSpan(journal3, "full_cap", doi, elid, issn1, "", "", "", settings, detectedField));
         }
+        let spinner = document.getElementById(elid);
+        if (spinner) spinner.remove();
+    } else {
+        // Fallback to API search with timeout
+        fetchRank(node, title, compl, scholar, elid, author, journal3, settings, detectedField);
+    }
 };
 
 
 scholar.rankSpanList = [];
 
 scholar.run = function (settings) {
-    // ========================================================================
-    // FIELD DETECTION: Load settings at startup
-    // ========================================================================
-    // Initialize field detection based on user settings
     loadFieldDetectionSettings();
-    // ========================================================================
 
     let url = window.location.pathname;
     let full_url = window.location.href;
+
     if (url == "/scholar") {
         scholar.appendRank(full_url, settings);
+
+        // Dynamic observer for infinite scroll / lazy-loaded results
+        let debounceTimer = null;
+        const triggerUpdate = function () {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(function () {
+                scholar.appendRank(full_url, settings);
+            }, 250);
+        };
+
+        const target = document.getElementById("gs_res_ccl_mid") || document.body;
+        if (target) {
+            const observer = new MutationObserver(function (mutations) {
+                let hasNewNodes = false;
+                for (let m of mutations) {
+                    if (m.addedNodes && m.addedNodes.length > 0) {
+                        hasNewNodes = true;
+                        break;
+                    }
+                }
+                if (hasNewNodes) triggerUpdate();
+            });
+            observer.observe(target, { childList: true, subtree: true });
+        }
+
+        // Scroll listener for seamless infinite scroll
+        window.addEventListener("scroll", triggerUpdate, { passive: true });
+
     } else if (url == "/citations") {
         scholar.appendRanks(settings);
         $("#gsc_bpf_more").click( function() {
@@ -173,7 +216,11 @@ function ajax(cite_link) {
 scholar.appendRank = function (full_url, settings) {
     let elements = $("#gs_res_ccl_mid > div > div.gs_ri");
     elements.each( async function () {
-        
+        if ($(this).attr("data-jqr-processed") === "true") {
+            return;
+        }
+        $(this).attr("data-jqr-processed", "true");
+
         let node = $(this).find("h3 > a");
         let title = node.text();
         let compl = $(this)
@@ -190,39 +237,27 @@ scholar.appendRank = function (full_url, settings) {
         let author = data[1];
         
         let elid = $(node).attr("id");
+        if (!elid) {
+            elid = "jqr_" + Math.random().toString(36).substring(2, 9);
+            $(node).attr("id", elid);
+        }
         let elid_id = elid;
         elid += "_wait_surr";
-        let span_wait = $('<span title="Fetching results from CrossRef API..." id="waiting" class="ccf-waiting">');
+        let span_wait = $('<span title="Fetching results from JQR database..." id="waiting" class="ccf-waiting">');
         let span_wait_surr = $('<span id="id" class="ccf-waiting_surr ccf-rank">')
             .append(span_wait)
             .attr("id",elid);
-        node
-            .append(span_wait_surr);
+        node.append(span_wait_surr);
             
-                    
-        let journal = $(this)
-            .find("div.gs_a")
-            .text();
+        let gs_a_text = $(this).find("div.gs_a").text();
+        let jInfo = extractJournalInfo(gs_a_text);
+        let journal3 = jInfo.name;
 
-        let r1 = journal.indexOf(String.fromCharCode(160) + "- ");
-        let journal2 = journal.substring(r1+3);
-        let r2 = journal2.indexOf(" - ");
-
-        journal3 = journal.substring(r1+3, r1+3+r2); 
-        journal3 = journal3.replace(/, \d\d\d\d/, "");
-                
-        full_url = "https://scholar.google.com/scholar"
-        let cite_link = full_url + "?q=info:" + elid_id + ":scholar.google.com/&output=cite&scirp=8&hl=de";
-  
-        let r3 = journal3.indexOf("…");
-           
-        if(r3 == -1) {
+        if (journal3 && journal3 !== "") {
             CircumventCrossRef(journal3, node, title, compl, scholar, elid, author, settings);
-
         } else {
-                    fetchRank(node, title, compl, scholar, elid, author, journal3, settings);
-                }
-
+            fetchRank(node, title, compl, scholar, elid, author, "", settings);
+        }
     });
 };
 

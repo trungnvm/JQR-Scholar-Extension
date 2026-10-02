@@ -32,12 +32,29 @@ function fetchRank(node, title, compl, site, elid, author, journal_hint, setting
     function proceedWithRendering(journalName, doi, issn1, issn2) {
         var dblp_venue = "";
         var dblp_doi = "";
+        var rendered = false;
+
+        function doRender() {
+            if (rendered) return;
+            rendered = true;
+            for (let getRankSpan of site.rankSpanList) {
+                // FIELD DETECTION: Pass detectedField to getRankSpan for field-aware ranking
+                $(node).after(getRankSpan(journalName, "full_cap", doi, elid, issn1, issn2, dblp_venue, dblp_doi, settings, detectedField));
+            }
+            // Ensure spinner is removed in case getRankSpan failed to remove it
+            var spinner = document.getElementById(elid);
+            if (spinner) spinner.remove();
+        }
+
         var xhrCORE = new XMLHttpRequest();
         var api_format2 = "https://dblp.org/search/publ/api?q=" + encodeURIComponent(title + " " + author) + "&format=json&h=1";
 
         xhrCORE.open("GET", api_format2, true);
+        xhrCORE.timeout = 2500; // 2.5s timeout for DBLP
+        xhrCORE.ontimeout = function () { doRender(); };
+        xhrCORE.onerror = function () { doRender(); };
         xhrCORE.onreadystatechange = function () {
-           if (xhrCORE.readyState == 4) {
+            if (xhrCORE.readyState == 4) {
                 try {
                     if (xhrCORE.status === 200) {
                         var resp = JSON.parse(xhrCORE.responseText).result.hits;
@@ -49,42 +66,33 @@ function fetchRank(node, title, compl, site, elid, author, journal_hint, setting
                 } catch (e) {
                     // Ignore DBLP errors
                 }
-
-                for (let getRankSpan of site.rankSpanList) {
-                    // FIELD DETECTION: Pass detectedField to getRankSpan for field-aware ranking
-                    $(node).after(getRankSpan(journalName, "full_cap", doi, elid, issn1, issn2, dblp_venue, dblp_doi, settings, detectedField));
-                }
+                doRender();
             }
         };
-        xhrCORE.send();
+        try {
+            xhrCORE.send();
+        } catch (e) {
+            doRender();
+        }
     }
 
-    // Fallback to local 2025 Data (sfc.impactFactorsNames)
+    // Fallback to local Data (sfc.impactFactorsNames / ccf.getImpactFactorByName)
     function tryLocalFallback() {
-        if (journal_hint && typeof sfc !== 'undefined' && sfc.impactFactorsNames) {
-            // Clean the hint: remove ellipses, extra spaces, lowercase
-            let cleanHint = journal_hint.replace(/[…\.]/g, "").trim().toLowerCase();
-
-            // Safety check to avoid matching empty or very short strings
-            if (cleanHint.length < 3) return;
-
-            // Fuzzy/Prefix match
-            for (let name in sfc.impactFactorsNames) {
-                if (name.startsWith(cleanHint)) {
-                    // Found a match!
-                    let match = sfc.impactFactorsNames[name];
+        if (journal_hint) {
+            let cleanHint = journal_hint.replace(/[…\.]/g, "").trim();
+            if (cleanHint.length >= 3 && typeof ccf !== 'undefined' && ccf.getImpactFactorByName) {
+                let match = ccf.getImpactFactorByName(cleanHint);
+                if (match) {
                     let issn = match.issn || "";
-
-                    // Use the matched full name and ISSN
-                    proceedWithRendering(name, "", issn, "");
+                    let full_name = match.name || cleanHint;
+                    proceedWithRendering(full_name, "", issn, "");
                     return;
                 }
             }
         }
 
         // If no local match found, continue with the provided hint or title
-        // This ensures DBLP search still runs and other rankings (ABDC, CORE) are checked
-        // and importantly, the spinner is removed.
+        // This ensures other rankings (ABDC, CORE, SJR) are checked and spinner is removed.
         proceedWithRendering(journal_hint || title, "", "", "");
     }
 
@@ -93,6 +101,15 @@ function fetchRank(node, title, compl, site, elid, author, journal_hint, setting
     var api_format = "https://api.crossref.org/works?query.bibliographic=" + encodeURIComponent(title + " " + compl) + "&rows=2&select=DOI,container-title,ISSN";
 
     xhr.open("GET", api_format, true);
+    xhr.timeout = 3000; // 3.0s timeout for CrossRef
+    xhr.ontimeout = function () {
+        console.warn("CrossRef API timed out. Falling back to local data.");
+        tryLocalFallback();
+    };
+    xhr.onerror = function () {
+        console.warn("CrossRef API network error. Falling back to local data.");
+        tryLocalFallback();
+    };
     xhr.onreadystatechange = function () {
         if (xhr.readyState == 4) {
             // Check for success (200 OK)

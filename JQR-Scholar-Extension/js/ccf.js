@@ -471,15 +471,38 @@ ccf.cleanName = function (str) {
 
 /**
  * Get Impact Factor data by journal name
+ * Supports exact match, 'the ' prefix variants, and prefix matching for truncated names.
  * @param {string} name - Journal name
  * @returns {object|null} Impact Factor data object or null if not found
  */
 ccf.getImpactFactorByName = function (name) {
-    if (!sfc || !sfc.impactFactorsNames) {
+    if (!sfc || !sfc.impactFactorsNames || !name) {
         return null;
     }
     let cleanedName = ccf.cleanName(name);
-    return sfc.impactFactorsNames[cleanedName] || null;
+    if (!cleanedName) return null;
+
+    // 1. Direct match
+    if (sfc.impactFactorsNames[cleanedName]) {
+        return sfc.impactFactorsNames[cleanedName];
+    }
+
+    // 2. 'The ' prefix toggle
+    let altName = cleanedName.startsWith('the ') ? cleanedName.substring(4).trim() : ('the ' + cleanedName);
+    if (altName && sfc.impactFactorsNames[altName]) {
+        return sfc.impactFactorsNames[altName];
+    }
+
+    // 3. Prefix matching (vital when Scholar truncates with ellipsis '…' or dots)
+    if (cleanedName.length >= 6) {
+        for (let key in sfc.impactFactorsNames) {
+            if (key.startsWith(cleanedName) || (cleanedName.length >= 10 && cleanedName.startsWith(key))) {
+                return sfc.impactFactorsNames[key];
+            }
+        }
+    }
+
+    return null;
 };
 
 
@@ -491,7 +514,6 @@ ccf.getImpactFactorByName = function (name) {
  */
 ccf.getImpactFactor = function (ISSN1, ISSN2) {
     if (!sfc || !sfc.impactFactors) {
-        console.log("CCF Debug: sfc or sfc.impactFactors is undefined");
         return null;
     }
 
@@ -501,14 +523,12 @@ ccf.getImpactFactor = function (ISSN1, ISSN2) {
     if (ISSN1 && ISSN1 !== "") {
         let cleanISSN1 = ISSN1.toUpperCase().replace(/[^A-Z0-9]/ig, "");
         ifData = sfc.impactFactors[cleanISSN1];
-        console.log("CCF Debug: Looking up IF for ISSN1:", cleanISSN1, "Result:", ifData);
     }
 
     // Try secondary ISSN if primary not found
     if (!ifData && ISSN2 && ISSN2 !== "") {
         let cleanISSN2 = ISSN2.toUpperCase().replace(/[^A-Z0-9]/ig, "");
         ifData = sfc.impactFactors[cleanISSN2];
-        console.log("CCF Debug: Looking up IF for ISSN2:", cleanISSN2, "Result:", ifData);
     }
 
     return ifData;
@@ -567,6 +587,15 @@ ccf.getIFSpan = function (ifData) {
     }
     if (ifData.h_index) {
         tooltipText += "\nH-Index: " + ifData.h_index;
+    }
+    if (ifData.categories && ifData.categories.length > 0) {
+        tooltipText += "\nCategories:\n" + ifData.categories.map(function(c) {
+            let catStr = " • " + c.cat;
+            if (c.q) catStr += " (" + c.q;
+            if (c.rank) catStr += ", " + c.rank;
+            if (c.q) catStr += ")";
+            return catStr;
+        }).join("\n");
     }
 
     let span = $("<span>")

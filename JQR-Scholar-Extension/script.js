@@ -26,8 +26,8 @@ loadSettings().then(function(items) {
     settings.AJG = items.AJG;
     settings.ABDC = items.ABDC;
     settings.FT50 = items.FT50;
-    settings.turbo = items.turbo;
-    settings.ext_on = items.ext_on;
+    settings.turbo = items.turbo ?? true;
+    settings.ext_on = items.ext_on ?? true;
     settings.fieldClassification = items.fieldClassification ?? true;
     settings.impactFactor = items.impactFactor ?? true;
 
