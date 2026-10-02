@@ -591,7 +591,9 @@ ccf.i18n = {
         scopusSubtitle: "Scopus SCImago Journal Rank",
         funSubtitle: "",
         noRanking: "No ranking found for",
-        defaultJournal: "Academic Journal"
+        defaultJournal: "Academic Journal",
+        multiCatNote: "💡 Multi-category journal: Displayed Quartile reflects the highest ranking among categories. Tiers may vary by research field. Verify via mjl.clarivate.com or scimagojr.com for field-specific evaluation.",
+        disclaimerNote: "💡 Note: Field classifications and Quartiles may vary across databases (SJR vs JCR). For official evaluation, visit mjl.clarivate.com or scimagojr.com."
     },
     vi: {
         impactFactor: "Hệ số tác động (IF)",
@@ -606,7 +608,9 @@ ccf.i18n = {
         scopusSubtitle: "Bảng xếp hạng Scopus SCImago (Kính chiếu yêu)",
         funSubtitle: "(Kính chiếu yêu)",
         noRanking: "Không tìm thấy xếp hạng cho",
-        defaultJournal: "Tạp chí khoa học"
+        defaultJournal: "Tạp chí khoa học",
+        multiCatNote: "💡 Tạp chí đa ngành: Phân hạng hiển thị là của chuyên ngành cao nhất. Giữa các ngành có thể khác nhau (Q1/Q2...). Vui lòng tra cứu mjl.clarivate.com hoặc scimagojr.com để có kết quả chính xác theo từng chuyên ngành.",
+        disclaimerNote: "💡 Lưu ý: Phân loại theo ngành và Quartile có thể khác biệt tùy theo lĩnh vực nghiên cứu (SJR vs JCR). Đề xuất tra cứu tại Clarivate Master Journal List (mjl.clarivate.com) hoặc Scimago (scimagojr.com) để có kết quả chính xác cho từng ngành cụ thể."
     }
 };
 
@@ -695,9 +699,22 @@ ccf.getIFSpan = function (ifData, settings) {
     let ifValue = parseFloat(ifData.value);
     let colorClass = ccf.getIFColorClass(ifData);
 
+    let hasMultipleQuartiles = false;
+    if (ifData.categories && ifData.categories.length > 1) {
+        let uniqueQs = new Set(ifData.categories.map(c => c.q).filter(q => q && q !== 'N/A'));
+        if (uniqueQs.size > 1) {
+            hasMultipleQuartiles = true;
+        }
+    }
+
+    let qDisplayValue = ifData.quartile || "N/A";
+    if (hasMultipleQuartiles && ifData.quartile) {
+        qDisplayValue += (lang === 'vi' ? " (Cao nhất)" : " (Best)");
+    }
+
     let metrics = [
         { label: t.impactFactor, value: ifValue.toFixed(1), colorClass: "jqr-val-highlight" },
-        { label: t.quartile, value: ifData.quartile || "N/A", colorClass: ifData.quartile ? "jqr-pill-" + ifData.quartile.toLowerCase() : "" },
+        { label: t.quartile, value: qDisplayValue, colorClass: ifData.quartile ? "jqr-pill-" + ifData.quartile.toLowerCase() : "" },
         { label: t.releaseYear, value: ifData.year ? ifData.year.toString() : "2025/2026" },
         { label: t.database, value: ifData.source || "Clarivate JCR" }
     ];
@@ -710,7 +727,8 @@ ccf.getIFSpan = function (ifData, settings) {
         subtitle: t.jcrSubtitle,
         metrics: metrics,
         categories: ifData.categories,
-        categoriesHeader: t.categoriesHeader
+        categoriesHeader: t.categoriesHeader,
+        note: hasMultipleQuartiles ? t.multiCatNote : t.disclaimerNote
     });
 
     let span = $("<span>")
@@ -779,11 +797,21 @@ ccf.getRankSpan = function (refine, type, doi, elid, ISSN1, ISSN2, dblp_venue, d
         if (ifData && ifData.value) {
             qMetrics.push({ label: t.impactFactor, value: ifData.value.toString() });
         }
+        if (!isJCRQuartile && ifData && ifData.quartile && ifData.quartile !== rank) {
+            qMetrics.push({ 
+                label: (lang === 'vi' ? "JCR (Clarivate)" : "JCR Quartile"), 
+                value: ifData.quartile, 
+                colorClass: "jqr-pill-" + ifData.quartile.toLowerCase() 
+            });
+        }
 
         let qCard = ccf.createTooltipCard({
             title: refine || t.defaultJournal,
             subtitle: isJCRQuartile ? t.wosSubtitle : t.scopusSubtitle,
-            metrics: qMetrics
+            metrics: qMetrics,
+            note: (!isJCRQuartile && ifData && ifData.quartile && ifData.quartile !== rank) 
+                ? t.disclaimerNote 
+                : undefined
         });
 
         span1

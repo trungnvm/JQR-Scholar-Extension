@@ -614,9 +614,15 @@
 
 .jqr-card-note {
     font-size: 11px;
-    color: #8b949e;
-    font-style: italic;
-    margin-top: 4px;
+    line-height: 1.45;
+    color: #e2e8f0;
+    margin-top: 8px;
+    padding: 7px 10px;
+    background: rgba(234, 179, 8, 0.12);
+    border-radius: 6px;
+    border-left: 3px solid #eab308;
+    text-align: left;
+    white-space: normal;
 }
 
 .circle {
