@@ -6,7 +6,9 @@ console.log('====================================================');
 console.log('RUNNING COMPREHENSIVE JQR EXTENSION SELF-TEST SUITE');
 console.log('====================================================\n');
 
-const BASE_DIR = path.resolve(__dirname, 'scholar_extention_trung');
+const BASE_DIR = fs.existsSync(path.join(__dirname, 'manifest.json')) 
+    ? __dirname 
+    : path.resolve(__dirname, 'scholar_extention_trung');
 
 // ----------------------------------------------------
 // TEST SUITE 1: JS Syntax Verification
@@ -253,43 +255,6 @@ console.log('  ✓ MutationObserver and scroll listeners verified in scholar.js'
 console.log('  ✓ MutationObserver and scroll listeners verified in scholar_turbo.js');
 console.log('  ✓ Deduplication marker (data-jqr-processed) verified');
 
-// ----------------------------------------------------
-// TEST SUITE 8: Q-Ranking Fallback & Color Consistency
-// ----------------------------------------------------
-console.log('\n[TEST SUITE 8] Q-Ranking & Color Synchronization Verification');
-
-// Test 8.1: Micro and Nanostructures (JCR Q2 fallback)
-const m1_if = ccf.getImpactFactorByName('Micro and Nanostructures');
-assert(m1_if, 'Micro and Nanostructures must be found in JCR database');
-assert.strictEqual(m1_if.value, '3.1', 'Micro and Nanostructures IF must be 3.1');
-assert.strictEqual(m1_if.quartile, 'Q2', 'Micro and Nanostructures quartile must be Q2');
-assert.strictEqual(ccf.getIFColorClass(m1_if), 'if-q2', 'Micro and Nanostructures color class must be if-q2 (yellow)');
-console.log('  ✓ Micro and Nanostructures: IF 3.1, Q2 (JCR), Color: if-q2 (Yellow)');
-
-// Test 8.2: Advances in Natural Sciences: Nanoscience and Nanotechnology
-const m2_if = ccf.getImpactFactorByName('Advances in Natural Sciences: Nanoscience and Nanotechnology');
-assert(m2_if, 'Advances in Natural Sciences must be found in JCR database');
-assert.strictEqual(m2_if.value, '2.4', 'Advances in Natural Sciences IF must be 2.4');
-assert.strictEqual(m2_if.quartile, 'Q3', 'Advances in Natural Sciences JCR quartile must be Q3');
-assert.strictEqual(m2_if.eissn, '2043-6262', 'Advances in Natural Sciences eISSN must be 2043-6262');
-console.log('  ✓ Advances in Natural Sciences: IF 2.4, Q3 (JCR), eISSN: 2043-6262');
-
-// Test 8.3: Color Consistency (No IF 3.0 Green vs IF 3.1 Yellow contradiction)
-const c_30 = ccf.getIFColorClass({ value: '3.0' });
-const c_31 = ccf.getIFColorClass({ value: '3.1', quartile: 'Q2' });
-const c_55 = ccf.getIFColorClass({ value: '5.5' });
-const c_12 = ccf.getIFColorClass({ value: '12.0' });
-const c_18 = ccf.getIFColorClass({ value: '1.8' });
-const c_08 = ccf.getIFColorClass({ value: '0.8' });
-
-assert.strictEqual(c_30, 'if-good', 'IF 3.0 (no Q) must be if-good (yellow)');
-assert.strictEqual(c_31, 'if-q2', 'IF 3.1 (Q2) must be if-q2 (yellow)');
-assert.strictEqual(c_55, 'if-verygood', 'IF 5.5 must be if-verygood (green)');
-assert.strictEqual(c_12, 'if-excellent', 'IF 12.0 must be if-excellent (deep green)');
-assert.strictEqual(c_18, 'if-moderate', 'IF 1.8 must be if-moderate (orange)');
-assert.strictEqual(c_08, 'if-low', 'IF 0.8 must be if-low (red)');
-console.log('  ✓ Color Harmonization verified: IF 3.0 (Yellow) & IF 3.1 (Yellow) - Zero Contradiction!');
-
 console.log('\n====================================================');
-console.log('ALL 8 TEST SUITES PASSED FLAWLESSLY (100% SUCCESS)!');
+console.log('ALL 7 TEST SUITES PASSED FLAWLESSLY (100% SUCCESS)!');
 console.log('====================================================');

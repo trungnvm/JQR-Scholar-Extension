@@ -1,9 +1,11 @@
-changed the chrome specific calls to firefox.
-changed the manifest.json value for "background"
-    firefox does not support background.sevice_worker
-    instead uses background.scripts
+v1.1 (2026-10-02):
+- Updated to latest Clarivate JCR 2026 ranking database (22,600+ journals across SCIE, SSCI, AHCI, ESCI).
+- Added multi-category percentiles, ranks, and subject breakdown in hover tooltips.
+- Implemented smart Q-ranking fallback mechanism (Scopus SJR -> Clarivate JCR).
+- Harmonized 100% of color palette between Impact Factor and Quartiles (unified Q2 tier for IF 3.0 - 5.0).
+- Added network timeouts and anti-spin safeguards to eliminate infinite spinners.
+- Added MutationObserver and debounced scroll listeners for infinite scroll support on Google Scholar.
+- Updated preview screenshots in README with live Google Scholar search interface.
 
-removed keys from manifest.json that don't exist in firefox's mdn v3
-
-for more information contact me at
-andreas.karasenko@uni-bayreuth.de
+v1.0:
+- Initial release with SJR, VHB, CCF, CORE on Google Scholar.

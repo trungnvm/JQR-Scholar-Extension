@@ -11,9 +11,9 @@ Building upon CCFrank and the original work by [Dr. Julian Wichmann](https://de.
 ## Key Features in v1.1
 
 - **2026 Clarivate JCR Impact Factor & Ranking Database Integration**:
-  - Direct integration from `data/2026-newJCRimpactfactor.xlsx` covering **22,643 academic journals** across SCIE, SSCI, AHCI, and ESCI.
+  - Complete Clarivate JCR 2026 database covering over **22,600 academic journals** across SCIE, SSCI, AHCI, and ESCI.
   - Pre-compiled into high-speed in-memory datasets: **39,913 ISSN/eISSN keys** and **70,266 journal title aliases and abbreviations**.
-  - Displays official **2025/2026 JIF scores**, **JIF Quartiles (Q1–Q4)**, **JCI percentiles**, and **full multi-category breakdown** from Column AG JSON in hover tooltips.
+  - Displays official **2025/2026 JIF scores**, **JIF Quartiles (Q1–Q4)**, **JCI percentiles**, and **comprehensive multi-category subject ranking breakdown** in hover tooltips.
 - **Smart Q Ranking Fallback (SJR Scopus & JCR Clarivate)**:
   - Intelligently checks Scopus SJR Q rating first. If missing, newly renamed, or unranked in Scopus (e.g., *Micro and Nanostructures*, *Advances in Natural Sciences: Nanoscience and Nanotechnology*), it automatically falls back to the official Clarivate JCR Quartile.
   - Informative tooltips show the exact quartile source: `SJR Quartile: Q... (Scopus)` or `JCR Quartile: Q... (Clarivate Web of Science)`.
@@ -73,7 +73,7 @@ The repository includes a comprehensive 8-suite self-test suite covering:
 1. Syntax check across all JavaScript files
 2. In-memory data loading (39,913 ISSN keys & 70,266 Name keys)
 3. Google Scholar `div.gs_a` text parsing (author vs venue separation)
-4. Dual ISSN/eISSN and multi-category Column AG JSON extraction
+4. Dual ISSN/eISSN and multi-category ranking extraction
 5. Tooltip & badge HTML generation
 6. Network timeouts and guaranteed spinner cleanup
 7. Infinite scroll and `MutationObserver` deduplication
@@ -97,6 +97,18 @@ node test_jqr_extension.js
 - **China Computer Federation (CCF)**: https://www.ccf.org.cn/
 - **Computing Research & Education Association of Australasia (CORE)**: http://portal.core.edu.au/
 - **Financial Times Research Rank (FT50)**: https://www.ft.com/
+
+---
+
+## Changelog
+
+- **v1.1 (2026-10-02)**:
+  - **Cập nhật danh sách mới 2026**: Nhúng trực tiếp CSDL Clarivate JCR 2026 mới nhất (`data/2026-newJCRimpactfactor.xlsx`) với **22.643 tạp chí**, **39.913 mã ISSN/eISSN**, và **70.266 tên & tên viết tắt** chuẩn hóa.
+  - **Bóc tách JSON đa ngành**: Hỗ trợ hiển thị đầy đủ Quartile và thứ hạng các ngành liên ngành từ Cột AG.
+  - **Cơ chế Fallback Q thông minh**: Tự động chuyển giao giữa Scopus SJR và Clarivate JCR, khắc phục triệt để lỗi thiếu Q ở *Micro and Nanostructures* và *Advances in Natural Sciences*.
+  - **Đồng bộ hóa 100% hệ màu**: Triệt tiêu hoàn toàn mâu thuẫn màu cũ (IF 3.0 và IF 3.1 đều đồng nhất mang màu vàng Q2).
+  - **Chống xoay mòng mòng & Cuộn vô tận**: Thêm timeout 3.0s/2.5s và MutationObserver.
+  - Chi tiết xem tại [CHANGELOG.md](./CHANGELOG.md).
 
 ---
 
