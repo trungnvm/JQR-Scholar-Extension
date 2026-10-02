@@ -1,41 +1,32 @@
-<h1 align="center"><img src="./icon/32x32.png" height="21px" alt=""> JQR Scholar Extension (v1.1) </h1> 
-<h3 align="center"> Rapid Journal Quality & Impact Factor Check for Google Scholar Search Results </h3>
-</br>
+<h1 align="center"><img src="./JQR-Scholar-Extension/icon/32x32.png" height="21px" alt=""> JQR - Journals Quality & Ranking</h1>
+<h3 align="center">Instant journal quality metrics on Google Scholar search results</h3>
 
-**JQR Scholar Extension** automatically displays journal rankings, Impact Factor (JIF), Quartiles (Q1–Q4), H-Index, and multi-category metrics directly beside search results in Google Scholar.
+<p align="center">
+  <b>🇬🇧 English</b> · <a href="./README_VI.md">🇻🇳 Tiếng Việt</a>
+</p>
 
-Building upon CCFrank and the original work by [Dr. Julian Wichmann](https://de.linkedin.com/in/julianwichmann), this version has been extensively refactored, modernized, and expanded with the complete **Clarivate JCR 2026 Database**, smart multi-tier Q fallbacks, high-speed local dictionary lookup, and unified color synchronization.
-
----
-
-## Key Features in v1.1
-
-- **2026 Clarivate JCR Impact Factor & Ranking Database Integration**:
-  - Complete Clarivate JCR 2026 database covering over **22,600 academic journals** across SCIE, SSCI, AHCI, and ESCI.
-  - Pre-compiled into high-speed in-memory datasets: **39,913 ISSN/eISSN keys** and **70,266 journal title aliases and abbreviations**.
-  - Displays official **2025/2026 JIF scores**, **JIF Quartiles (Q1–Q4)**, **JCI percentiles**, and **comprehensive multi-category subject ranking breakdown** in hover tooltips.
-- **Smart Q Ranking Fallback (SJR Scopus & JCR Clarivate)**:
-  - Intelligently checks Scopus SJR Q rating first. If missing, newly renamed, or unranked in Scopus (e.g., *Micro and Nanostructures*, *Advances in Natural Sciences: Nanoscience and Nanotechnology*), it automatically falls back to the official Clarivate JCR Quartile.
-  - Informative tooltips show the exact quartile source: `SJR Quartile: Q... (Scopus)` or `JCR Quartile: Q... (Clarivate Web of Science)`.
-- **Harmonized Color Hierarchy (Zero Discrepancy)**:
-  - Synchronized CSS variables and badge logic so numeric IF thresholds perfectly match Quartile tiers:
-    - **Top Tier / Super Elite (IF >= 10.0)**: Deep Green (`#28a745`)
-    - **Q1 / High Quality (IF >= 5.0)**: Vibrant Green (`#34ce57`)
-    - **Q2 / Very Good (IF 3.0 to < 5.0)**: Clean Yellow (`#ffc107`) — *Both IF 3.0 and IF 3.1 are consistently yellow!*
-    - **Q3 / Moderate (IF 1.5 to < 3.0)**: Warm Orange (`#ff8800`)
-    - **Q4 / Low (IF < 1.5)**: Coral Red (`#dc3545`)
-- **Instant Local Lookups (0ms Latency)**:
-  - Resolves journal rankings instantly from memory without waiting for external API calls, eliminating rate limits and slow load times.
-- **Anti-Spin & Network Timeout Safeguards**:
-  - CrossRef API timeout set to 3.0s and DBLP timeout to 2.5s with guaranteed spinner removal (`ccf-waiting`).
-- **Seamless Infinite Scroll & Dynamic Observation**:
-  - `MutationObserver` on `#gs_res_ccl_mid` plus debounced scroll listeners ensure newly loaded search results receive badges automatically.
-- **Multi-Rank Support**:
-  - Supports JCR, Scopus SJR, CORE (Journals & Conferences), CCF, ABDC, AJG (ABS), FT50, VHB, FNEGE, CoNRS, HCERES, and Danish BFI.
+<p align="center">
+  <img src="https://img.shields.io/badge/Manifest-V3-blue" alt="Manifest V3">
+  <img src="https://img.shields.io/badge/Chrome-Supported-green" alt="Chrome">
+  <img src="https://img.shields.io/badge/Firefox-Supported-orange" alt="Firefox">
+  <img src="https://img.shields.io/badge/version-1.0-brightgreen" alt="Version">
+</p>
 
 ---
 
-## Preview
+A browser extension that displays **journal rankings and impact metrics** directly in your [Google Scholar](https://scholar.google.com) search results — so you can assess paper quality at a glance.
+
+## ✨ Features
+
+- 📊 **15+ ranking systems**: SJR, Impact Factor (JCR), H-Index, VHB, ABDC, AJG, CORE, CCF, CNRS, FNEGE, FT50, HCERES, BFI, SNIP, CiteScore
+- 🎨 **Color-coded badges**: Green (high quality) → Red (lower quality)
+- 🔍 **Journal search**: Look up any journal's rankings directly from the popup
+- 🏷️ **Field classification**: Automatic detection of research fields
+- 🖱️ **Hover for details**: See H-Index, identified journal name, and more
+- 🔗 **Click for DOI**: Navigate directly to the identified work
+- ⚙️ **Customizable**: Toggle rankings on/off, choose what to display
+
+## 📸 Preview
 
 Journal rankings and Impact Factors are directly added to Google Scholar search results with real-time badges and modern HUD tooltip cards.
 
@@ -59,72 +50,68 @@ Hovering over any Quartile or Impact Factor badge instantly displays an interact
 - **Subject Categories & Rankings Breakdown**: Shows every official subject category with Quartile badge, Exact Rank within field (e.g. `1/180`), and JCI Percentile (e.g. `99.7%`).
 - **Bilingual Support (EN / VI)**: Clean toggle between English and Vietnamese, including playful subtitle *(Kính chiếu yêu)* in Vietnamese mode.
 
----
+## 🚀 Installation
 
-## Installation Guide
+### Chrome / Edge / Brave (Developer Mode)
 
-### Google Chrome (Recommended)
-1. Clone or download this repository to your local computer.
-2. Open Google Chrome and navigate to `chrome://extensions/`.
-3. Enable **Developer mode** toggle in the top-right corner.
-4. Click **Load unpacked** and select the extension folder:
-   - `JQR-Scholar-Extension`
-5. Visit [Google Scholar](https://scholar.google.com) and search for any topic or author to see instant journal rankings and Impact Factors!
+1. Download or clone this repository:
+   ```bash
+   git clone https://github.com/trungnvm/JQR-Scholar-Extension.git
+   ```
+2. Open Chrome and go to **`chrome://extensions/`**
+3. Enable **Developer mode** (toggle in top-right corner)
+4. Click **"Load unpacked"**
+5. Select the **`JQR-Scholar-Extension`** folder (the one containing `manifest.json`)
+6. The extension icon will appear in your toolbar ✅
 
-### Mozilla Firefox
-1. Open Firefox and go to `about:debugging#/runtime/this-firefox`.
-2. Click **Load Temporary Add-on...**.
-3. Select the `manifest.json` file inside the extension folder.
+### Firefox (Temporary Install)
 
----
+1. Download or clone this repository
+2. Open Firefox and go to **`about:debugging#/runtime/this-firefox`**
+3. Click **"Load Temporary Add-on..."**
+4. Navigate to the `JQR-Scholar-Extension` folder and select **`manifest.json`**
+5. Go to the addon settings (top-right) and grant permissions for your Google Scholar domain (e.g. `https://scholar.google.com`)
 
-## Automated Verification
+> ⚠️ Temporary add-ons are removed when Firefox restarts. For permanent install, get it from [Firefox Add-ons](https://addons.mozilla.org/de/firefox/addon/rapid-journal-quality-check/).
 
-The repository includes a comprehensive 8-suite self-test suite covering:
-1. Syntax check across all JavaScript files
-2. In-memory data loading (39,913 ISSN keys & 70,266 Name keys)
-3. Google Scholar `div.gs_a` text parsing (author vs venue separation)
-4. Dual ISSN/eISSN and multi-category ranking extraction
-5. Tooltip & badge HTML generation
-6. Network timeouts and guaranteed spinner cleanup
-7. Infinite scroll and `MutationObserver` deduplication
-8. Specific edge cases (*Micro and Nanostructures*, *Advances in Natural Sciences*, color harmonization)
+## 📖 Usage
 
-Run the test suite at any time:
-```bash
-node test_jqr_extension.js
-```
+1. Install the extension (see above)
+2. Go to [Google Scholar](https://scholar.google.com) and search normally
+3. Ranking badges will appear **automatically** next to each result
+4. Click the **JQR icon** in the toolbar to:
+   - Toggle the extension on/off
+   - Enable/disable Impact Factor display
+   - Enable/disable Field Classification
+   - Search for a specific journal
+5. Click **"Advanced Settings"** for detailed ranking configuration
 
----
+## 🏗️ Supported Rankings
 
-## Ranking Sources & References
+| Ranking | Full Name | Source |
+|---------|-----------|--------|
+| **SJR** | SCImago Journal Rank | [scimagojr.com](https://www.scimagojr.com) |
+| **JCR** | Journal Citation Reports (Impact Factor) | Clarivate |
+| **VHB** | VHB-JOURQUAL 3 & 4 | [vhbonline.org](https://vhbonline.org) |
+| **ABDC** | Australian Business Deans Council | [abdc.edu.au](https://abdc.edu.au) |
+| **AJG** | Academic Journal Guide (CABS) | [charteredabs.org](https://charteredabs.org) |
+| **CORE** | Computing Research & Education | [portal.core.edu.au](http://portal.core.edu.au) |
+| **CCF** | China Computer Federation | [ccf.org.cn](https://www.ccf.org.cn) |
+| **CNRS** | Centre National de la Recherche Scientifique | [gate.cnrs.fr](https://www.gate.cnrs.fr) |
+| **FNEGE** | Foundation Nationale pour l'Enseignement de la Gestion | [fnege.org](https://www.fnege.org) |
+| **FT50** | Financial Times Top 50 | [ft.com](https://www.ft.com) |
+| **HCERES** | High Council for Evaluation of Research | [hceres.fr](https://www.hceres.fr) |
+| **SNIP** | Source Normalized Impact per Paper | Scopus |
+| **CiteScore** | CiteScore | Scopus |
+| **BFI** | Bibliometriske Forskningsindikator | Danish Ministry |
 
-- **Clarivate Journal Citation Reports (JCR 2025/2026)**: Web of Science Group
-- **SCImago Journal & Country Rank (SJR)**: http://www.scimagojr.com
-- **Crossref Public API**: https://api.crossref.org/
-- **DBLP Computer Science Bibliography**: https://dblp.org/
-- **Australian Business Deans Council (ABDC)**: https://abdc.edu.au/
-- **Chartered Association of Business Schools (AJG/ABS)**: https://charteredabs.org/
-- **China Computer Federation (CCF)**: https://www.ccf.org.cn/
-- **Computing Research & Education Association of Australasia (CORE)**: http://portal.core.edu.au/
-- **Financial Times Research Rank (FT50)**: https://www.ft.com/
+## 🙏 Credits
 
----
+- Original Chrome extension by [Dr. Julian R. K. Wichmann](https://de.linkedin.com/in/julianwichmann)
+- Based on [CCFrank](https://github.com/WenyanLiu/CCFrank4dblp) by WenyanLiu
+- Uses [Crossref API](https://api.crossref.org) and [dblp API](https://dblp.org)
+- Icons from [Flaticon](https://www.flaticon.com/free-icons/research)
 
-## Changelog
+## 📄 License
 
-- **v1.1 (2026-10-02)**:
-  - **Cập nhật danh sách mới 2026**: Nhúng trực tiếp CSDL Clarivate JCR 2026 mới nhất (`data/2026-newJCRimpactfactor.xlsx`) với **22.643 tạp chí**, **39.913 mã ISSN/eISSN**, và **70.266 tên & tên viết tắt** chuẩn hóa.
-  - **Bóc tách JSON đa ngành**: Hỗ trợ hiển thị đầy đủ Quartile và thứ hạng các ngành liên ngành từ Cột AG.
-  - **Cơ chế Fallback Q thông minh**: Tự động chuyển giao giữa Scopus SJR và Clarivate JCR, khắc phục triệt để lỗi thiếu Q ở *Micro and Nanostructures* và *Advances in Natural Sciences*.
-  - **Đồng bộ hóa 100% hệ màu**: Triệt tiêu hoàn toàn mâu thuẫn màu cũ (IF 3.0 và IF 3.1 đều đồng nhất mang màu vàng Q2).
-  - **Chống xoay mòng mòng & Cuộn vô tận**: Thêm timeout 3.0s/2.5s và MutationObserver.
-  - Chi tiết xem tại [CHANGELOG.md](./CHANGELOG.md).
-
----
-
-## License & Credits
-
-- MIT License
-- Based on CCFrank by WenyanLiu (https://github.com/WenyanLiu/CCFrank4dblp) and CCFrank4Scholar by Julian R. K. Wichmann.
-- Maintained & upgraded by Trung V.M Nguyen.
+See [LICENSE](./JQR-Scholar-Extension/LICENSE) for details.
