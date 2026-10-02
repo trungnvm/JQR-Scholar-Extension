@@ -590,7 +590,11 @@ ccf.getIFSpan = function (ifData) {
     let ifValue = parseFloat(ifData.value);
     let colorClass = ccf.getIFColorClass(ifData);
 
-    let tooltipText = "Impact Factor: " + ifValue;
+    let tooltipText = "";
+    if (ifData.name) {
+        tooltipText += ifData.name + "\n";
+    }
+    tooltipText += "Impact Factor: " + ifValue;
     if (ifData.year) {
         tooltipText += "\nYear: " + ifData.year;
     }
@@ -666,135 +670,181 @@ ccf.getRankSpan = function (refine, type, doi, elid, ISSN1, ISSN2, dblp_venue, d
     if (rank != "NA" && rank != undefined && rank != "") {
         allNA = allNA + 1;
         let qClass = "SJR_Q2_" + rank.replace(/[+*]/g, "plus").toLowerCase();
+        let qTooltip = "";
+        if (refine) {
+            qTooltip += refine + "\n";
+        }
+        if (isJCRQuartile) {
+            qTooltip += "JCR Quartile: " + rank + " (Clarivate Web of Science)";
+        } else {
+            qTooltip += "SJR Quartile: " + rank + " (Scopus)";
+        }
+        if (rankInfo.AllRanks.SJR_H && rankInfo.AllRanks.SJR_H !== "NA") {
+            qTooltip += "\nH-Index: " + rankInfo.AllRanks.SJR_H;
+        }
+
         span1
             .addClass("ccf-rank")
             .addClass(qClass)
-            .text(rank); 
-        if (isJCRQuartile) {
-            span1.attr("title", "JCR Quartile: " + rank + " (Clarivate Web of Science)");
-        } else {
-            span1.attr("title", "SJR Quartile: " + rank + " (Scopus)");
-        }
+            .text(rank)
+            .addClass("ccf-tooltip")
+            .append($("<pre>").addClass("ccf-tooltiptext").text(qTooltip));
     }      
     
     let span2 = $("<span>");
     rank = rankInfo.AllRanks.VHB;
     if (rank != "NA" && rank != undefined) {
         allNA = allNA + 1;
+        let vhbTooltip = (refine ? refine + "\n" : "") + "VHB: " + rank;
         span2
             .addClass("ccf-rank")
             .addClass("VHB3_" + rank.replace(/[+*/]/g, "plus").toLowerCase() )
-            .text(rank); 
+            .text(rank)
+            .addClass("ccf-tooltip")
+            .append($("<pre>").addClass("ccf-tooltiptext").text(vhbTooltip)); 
     }
 
     let span3 = $("<span>");
     rank = rankInfo.AllRanks.VHB4;
     if (rank != "NA" && rank != undefined) {
         allNA = allNA + 1;
+        let vhb4Tooltip = (refine ? refine + "\n" : "") + "VHB4: " + rank;
         span3
             .addClass("ccf-rank")
             .addClass("VHB4_" + rank.replace(/[+*]/g, "plus").toLowerCase() )
-            .text(rank);
+            .text(rank)
+            .addClass("ccf-tooltip")
+            .append($("<pre>").addClass("ccf-tooltiptext").text(vhb4Tooltip));
     }
     
     let span4 = $("<span>");
     rank = rankInfo.AllRanks.FNEGE;
     if (rank != "NA" && rank != undefined) {
         allNA = allNA + 1;
+        let fnegeTooltip = (refine ? refine + "\n" : "") + "FNEGE: " + rank;
         span4
             .addClass("ccf-rank")
             .addClass("FNEGE_" + rank.replace(/[+*]/g, "plus").toLowerCase() )
-            .text(rank); 
+            .text(rank)
+            .addClass("ccf-tooltip")
+            .append($("<pre>").addClass("ccf-tooltiptext").text(fnegeTooltip)); 
     } 
         
     let span5 = $("<span>");
     rank = rankInfo.AllRanks.CoNRS;
     if (rank != "NA" && rank != undefined) {
         allNA = allNA + 1;
+        let conrsTooltip = (refine ? refine + "\n" : "") + "CoNRS: " + rank;
         span5
             .addClass("ccf-rank")
             .addClass("CoNRS_" + rank.replace(/[+*]/g, "plus").toLowerCase() )
-            .text(rank); 
+            .text(rank)
+            .addClass("ccf-tooltip")
+            .append($("<pre>").addClass("ccf-tooltiptext").text(conrsTooltip)); 
     } 
     
     let span6 = $("<span>");
     rank = rankInfo.AllRanks.HCERE;
     if (rank != "NA" && rank != undefined) {
         allNA = allNA + 1;
+        let hcereTooltip = (refine ? refine + "\n" : "") + "HCERES: " + rank;
         span6
             .addClass("ccf-rank")
             .addClass("HCERE_" + rank.replace(/[+*]/g, "plus").toLowerCase() )
-            .text(rank); 
+            .text(rank)
+            .addClass("ccf-tooltip")
+            .append($("<pre>").addClass("ccf-tooltiptext").text(hcereTooltip)); 
     } 
     
     let span7 = $("<span>");
     rank = rankInfo.AllRanks.CORE;
     if (rank != "NA" && rank != undefined) {
         allNA = allNA + 1;
+        let coreTooltip = (refine ? refine + "\n" : "") + "CORE (Journal): " + rank;
         span7
             .addClass("ccf-rank")
             .addClass("CORE_" + rank.replace(/[+*]/g, "plus").toLowerCase() )
-            .text(rank); 
+            .text(rank)
+            .addClass("ccf-tooltip")
+            .append($("<pre>").addClass("ccf-tooltiptext").text(coreTooltip)); 
     } 
     
     let span8 = $("<span>");
     rank = rankInfo.AllRanks.CORE_Conf;
     if (rank != "NA" && rank != undefined) {
         allNA = allNA + 1;
+        let coreConfTooltip = (refine ? refine + "\n" : "") + "CORE (Conference): " + rank;
         span8
             .addClass("ccf-rank")
             .addClass("CORE_" + rank.replace(/[+*]/g, "plus").toLowerCase() )
-            .text(rank); 
+            .text(rank)
+            .addClass("ccf-tooltip")
+            .append($("<pre>").addClass("ccf-tooltiptext").text(coreConfTooltip)); 
     } 
     
     let span9 = $("<span>");
     rank = rankInfo.AllRanks.CCF;
     if (rank != "NA" && rank != undefined) {
         allNA = allNA + 1;
+        let ccfTooltip = (refine ? refine + "\n" : "") + "CCF: " + rank;
         span9
             .addClass("ccf-rank")
             .addClass("CCF_" + rank.replace(/[+*]/g, "plus").toLowerCase() )
-            .text(rank); 
+            .text(rank)
+            .addClass("ccf-tooltip")
+            .append($("<pre>").addClass("ccf-tooltiptext").text(ccfTooltip)); 
     } 
     
     let span10 = $("<span>");
     rank = rankInfo.AllRanks.DAEN;
     if (rank != "NA" && rank != undefined) {
         allNA = allNA + 1;
+        let bfiTooltip = (refine ? refine + "\n" : "") + "BFI: " + rank;
         span10
             .addClass("ccf-rank")
             .addClass("DAEN_" + rank.replace(/[+*]/g, "plus").toLowerCase() )
-            .text(rank); 
+            .text(rank)
+            .addClass("ccf-tooltip")
+            .append($("<pre>").addClass("ccf-tooltiptext").text(bfiTooltip)); 
     } 
     
     let span11 = $("<span>");
     rank = rankInfo.AllRanks.AJG;
     if (rank != "NA" && rank != undefined) {
         allNA = allNA + 1;
+        let ajgTooltip = (refine ? refine + "\n" : "") + "AJG: " + rank;
         span11
             .addClass("ccf-rank")
             .addClass("AJG_" + rank.replace(/[+*]/g, "plus").toLowerCase() )
-            .text(rank); 
+            .text(rank)
+            .addClass("ccf-tooltip")
+            .append($("<pre>").addClass("ccf-tooltiptext").text(ajgTooltip)); 
     } 
         
     let span12 = $("<span>");
     rank = rankInfo.AllRanks.ABDC;
     if (rank != "NA" && rank != undefined) {
         allNA = allNA + 1;
+        let abdcTooltip = (refine ? refine + "\n" : "") + "ABDC: " + rank;
         span12
             .addClass("ccf-rank")
             .addClass("ABDC_" + rank.replace(/[+*]/g, "plus").toLowerCase() )
-            .text(rank); 
+            .text(rank)
+            .addClass("ccf-tooltip")
+            .append($("<pre>").addClass("ccf-tooltiptext").text(abdcTooltip)); 
     } 
     
     let span13 = $("<span>");
     rank = rankInfo.AllRanks.FT50;
     if (rank != "NA" && rank != undefined) {
         allNA = allNA + 1;
+        let ft50Tooltip = (refine ? refine + "\n" : "") + "FT50: " + rank;
         span13
             .addClass("ccf-rank")
             .addClass("FT50_" + rank.replace(/[+*]/g, "plus").toLowerCase() )
-            .text(rank);
+            .text(rank)
+            .addClass("ccf-tooltip")
+            .append($("<pre>").addClass("ccf-tooltiptext").text(ft50Tooltip));
     }
 
     // Impact Factor badge
@@ -989,53 +1039,29 @@ let additional = 0;
     const isundef = (currentValue) => (currentValue === undefined || currentValue === "" || currentValue === "NA");
    
     if ( (!Ranks_chosen.every(isundef)) ) {   
-        
         chosen = 1;
-
-        if(show_only_CORE == 0) {
-            span123
-                .addClass("ccf-tooltip")
-                .append($("<pre>").addClass("ccf-tooltiptext").text(popup_text));        
-        } else {
-            span123
-                .addClass("ccf-tooltip")
-                .append($("<pre>").addClass("ccf-tooltiptext").text(popup_text_CORE));   
-        }
+        // Individual badges (Q, IF, etc.) have their own dedicated tooltips, avoiding overlaps
     } else if ( (refine == "" && ISSN1 == "") || (Ranks_chosen.every(isundef)) ) {
-        
         chosen = 0;
-
         span123 = $("<span>")
             .addClass("ccf-rank")
             .text("NA")
             .addClass("ccf-none")
             .addClass("ccf-tooltip")
-            .append($("<pre>").addClass("ccf-tooltiptext").text(rankInfo.info));       
+            .append($("<pre>").addClass("ccf-tooltiptext").text(rankInfo.info || "No ranking found"));       
     } 
 
     if  ( (!Ranks_additional.every(isundef)) ) {   
-        
         additional = 1;
- 
-        if(show_only_CORE_add == 0) {
-           span456  
-                .addClass("ccf-tooltip")
-                .append($("<pre>").addClass("ccf-tooltiptext").text(popup_text_add));
-         } else {
-           span456  
-                .addClass("ccf-tooltip")
-                .append($("<pre>").addClass("ccf-tooltiptext").text(popup_text_CORE_add));    
-        }
+        // Individual badges have their own dedicated tooltips
     } else if ( (Ranks_additional.every(isundef)) ) {   
-        
         additional = 0;
-
         span456 = $("<span id='add_rank'>")
             .addClass("ccf-rank")
             .addClass("ccf-none") 
             .text("NA")
             .addClass("ccf-tooltip")
-            .append($("<pre>").addClass("ccf-tooltiptext").text(rankInfo.info)); 
+            .append($("<pre>").addClass("ccf-tooltiptext").text(rankInfo.info || "No ranking found")); 
     }   
     
     link_text = "https://doi.org/" + doi; 
@@ -1114,3 +1140,18 @@ let additional = 0;
     return span; 
     
 };
+
+// Auto-flip tooltip above badge if not enough room below in the viewport
+if (typeof $ !== 'undefined') {
+    $(document).on("mouseenter", ".ccf-tooltip", function() {
+        let tooltip = $(this).children(".ccf-tooltiptext");
+        if (tooltip.length) {
+            let rect = this.getBoundingClientRect();
+            if (window.innerHeight - rect.bottom < 180 && rect.top > 180) {
+                tooltip.addClass("tooltip-above");
+            } else {
+                tooltip.removeClass("tooltip-above");
+            }
+        }
+    });
+}
