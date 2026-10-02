@@ -28,12 +28,18 @@ document.getElementById('refresh').addEventListener('click', function() {
   });
 });
 
+const rankingIds = [
+  'ABDC', 'AJG', 'DAEN', 'CCF', 'CoNRS', 'CORE', 'FNEGE', 'FT50', 'HCERE', 'SJR', 'VHB', 'VHB4'
+];
+
 const i18n = {
   en: {
     appTitle: "Journals Quality",
     funSubtitle: "",
     showFunSubtitle: false,
     txtFeatures: "Features",
+    lblEnableAll: "Enable All",
+    subEnableAll: "Enable all rankings & features",
     lblEnable: "Enable JQR",
     subEnable: "Show rankings globally",
     lblIf: "Impact Factor",
@@ -51,6 +57,8 @@ const i18n = {
     funSubtitle: "(Kính chiếu yêu)",
     showFunSubtitle: true,
     txtFeatures: "Tính năng",
+    lblEnableAll: "Bật tất cả",
+    subEnableAll: "Bật toàn bộ bảng xếp hạng & tính năng",
     lblEnable: "Bật JQR",
     subEnable: "Hiển thị thứ hạng toàn diện",
     lblIf: "Hệ số tác động (IF)",
@@ -66,6 +74,51 @@ const i18n = {
 };
 
 let currentLang = 'vi';
+
+function updateEnableAllState() {
+  const on_off = document.getElementById('on').checked;
+  const impactFactor = document.getElementById('impactFactor').checked;
+  const fieldClassification = document.getElementById('fieldClassification').checked;
+  const autoExpand = document.getElementById('autoExpand').checked;
+  const enableAllEl = document.getElementById('enableAll');
+  if (enableAllEl) {
+    enableAllEl.checked = on_off && impactFactor && fieldClassification && autoExpand;
+  }
+}
+
+function onEnableAllChange() {
+  const isChecked = document.getElementById('enableAll').checked;
+  document.getElementById('on').checked = isChecked;
+  document.getElementById('impactFactor').checked = isChecked;
+  document.getElementById('fieldClassification').checked = isChecked;
+  document.getElementById('autoExpand').checked = isChecked;
+
+  browserAPI.storage.local.get(null, function(items) {
+    const newSettings = {
+      ...items,
+      enableAll: isChecked,
+      ext_on: isChecked,
+      impactFactor: isChecked,
+      fieldClassification: isChecked,
+      autoExpand: isChecked,
+      language: currentLang
+    };
+
+    if (isChecked) {
+      rankingIds.forEach(id => {
+        newSettings[id] = true;
+      });
+    }
+
+    browserAPI.storage.local.set(newSettings, function() {
+      if (isChecked === false) {
+        browserAPI.action.setBadgeText({ text: 'OFF' });
+      } else {
+        browserAPI.action.setBadgeText({ text: '' });
+      }
+    });
+  });
+}
 
 function applyLanguage(lang) {
   currentLang = lang === 'en' ? 'en' : 'vi';
@@ -86,6 +139,12 @@ function applyLanguage(lang) {
 
   const txtFeaturesEl = document.getElementById('txt_features');
   if (txtFeaturesEl) txtFeaturesEl.textContent = t.txtFeatures;
+
+  const lblEnableAllEl = document.getElementById('lbl_enableAll');
+  if (lblEnableAllEl) lblEnableAllEl.textContent = t.lblEnableAll;
+
+  const subEnableAllEl = document.getElementById('sub_enableAll');
+  if (subEnableAllEl) subEnableAllEl.textContent = t.subEnableAll;
 
   const lblEnableEl = document.getElementById('lbl_enable');
   if (lblEnableEl) lblEnableEl.textContent = t.lblEnable;
@@ -143,10 +202,14 @@ function save_options() {
   const impactFactor = document.getElementById('impactFactor').checked;
   const fieldClassification = document.getElementById('fieldClassification').checked;
   const autoExpand = document.getElementById('autoExpand').checked;
+  updateEnableAllState();
+
+  const enableAll = document.getElementById('enableAll') ? document.getElementById('enableAll').checked : false;
 
   browserAPI.storage.local.get(null, function(items) {
     const newSettings = {
       ...items,
+      enableAll: enableAll,
       ext_on: on_off,
       impactFactor: impactFactor,
       fieldClassification: fieldClassification,
@@ -169,6 +232,7 @@ function save_options() {
  */
 function restore_options() {
   browserAPI.storage.local.get({
+    enableAll: true,
     ext_on: true,
     impactFactor: true,
     fieldClassification: true,
@@ -179,6 +243,14 @@ function restore_options() {
     document.getElementById('impactFactor').checked = items.impactFactor;
     document.getElementById('fieldClassification').checked = items.fieldClassification;
     document.getElementById('autoExpand').checked = items.autoExpand;
+
+    const enableAllEl = document.getElementById('enableAll');
+    if (enableAllEl) {
+      enableAllEl.checked = (items.enableAll !== undefined) 
+        ? items.enableAll 
+        : (items.ext_on && items.impactFactor && items.fieldClassification && items.autoExpand);
+    }
+
     applyLanguage(items.language || 'vi');
 
     if (items.ext_on === false) {
@@ -190,6 +262,8 @@ function restore_options() {
 }
 
 // Event Listeners for toggles
+const enableAllToggle = document.getElementById('enableAll');
+if (enableAllToggle) enableAllToggle.addEventListener('change', onEnableAllChange);
 document.getElementById('on').addEventListener('change', save_options);
 document.getElementById('impactFactor').addEventListener('change', save_options);
 document.getElementById('fieldClassification').addEventListener('change', save_options);

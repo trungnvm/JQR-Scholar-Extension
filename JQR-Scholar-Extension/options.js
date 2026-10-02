@@ -271,10 +271,13 @@ checkboxIds.forEach(id => {
     const element = document.getElementById(id);
     if (element) {
         element.addEventListener('change', () => {
-            // If any ranking checkbox is unchecked manually, uncheck "Enable All"
-            if (rankingIds.includes(id) && !element.checked) {
+            if (rankingIds.includes(id)) {
+                const allChecked = rankingIds.every(rid => {
+                    const el = document.getElementById(rid);
+                    return el ? el.checked : false;
+                });
                 const enableAllEl = document.getElementById('enableAll');
-                if (enableAllEl) enableAllEl.checked = false;
+                if (enableAllEl) enableAllEl.checked = allChecked;
             }
             save_options();
         });
