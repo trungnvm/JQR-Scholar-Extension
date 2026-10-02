@@ -234,11 +234,11 @@ assert(tooltipVi, 'Tooltip element must be appended');
 const textVi = tooltipVi._text();
 assert(textVi.includes('Hệ số tác động (IF)') && textVi.includes('91.2'), 'VI Tooltip must have IF label and 91.2');
 assert(textVi.includes('Phân hạng (Quartile)'), 'VI Tooltip must have Quartile label');
-assert(textVi.includes('Kính chiếu yêu'), 'VI Tooltip must have fun subtitle "(Kính chiếu yêu)"');
+assert(!textVi.includes('Kính chiếu yêu'), 'VI Article Tooltip must NOT have "(Kính chiếu yêu)"');
 assert(textVi.includes('Chuyên ngành & Xếp hạng'), 'VI Tooltip must have Vietnamese categories heading');
 assert(textVi.includes('BIOTECHNOLOGY & APPLIED MICROBIOLOGY'), 'VI Tooltip must have Category 1');
 assert(textVi.includes('1/180'), 'VI Tooltip must have Rank 1/180');
-console.log('  ✓ Generated Vietnamese Card Tooltip (with "Kính chiếu yêu"): Verified!');
+console.log('  ✓ Generated Vietnamese Professional Card Tooltip (without "Kính chiếu yêu"): Verified!');
 
 // 2. English tooltip test
 const badgeSpanEn = ccf.getIFSpan(nrdMatch, { language: 'en' });
