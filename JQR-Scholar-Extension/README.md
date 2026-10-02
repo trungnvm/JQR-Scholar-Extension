@@ -1,73 +1,102 @@
-<h1 align="center"><img src="./icon/32x32.png" height="21px" alt=""> RapidJournalQualCheck </h1> 
-<h3 align="center"> Rapid Quality Check for Academic Journals in Google Scholar Search Results </h3>
+<h1 align="center"><img src="./icon/32x32.png" height="21px" alt=""> JQR Scholar Extension (v1.1) </h1> 
+<h3 align="center"> Rapid Journal Quality & Impact Factor Check for Google Scholar Search Results </h3>
 </br>
 
-<b> This is a Firefox port of the Chrome extension by [Dr.Wichmann](https://de.linkedin.com/in/julianwichmann) to display SJR along with the H-Index and CCF score next to Google Scholar search results. </b> For the original post see [here](https://de.linkedin.com/posts/julianwichmann_google-scholar-extension-activity-6967463018607611904-nsbm).
+**JQR Scholar Extension** automatically displays journal rankings, Impact Factor (JIF), Quartiles (Q1–Q4), H-Index, and multi-category metrics directly beside search results in Google Scholar.
 
-Get the extension on [Firefox](https://addons.mozilla.org/de/firefox/addon/rapid-journal-quality-check/).
+Building upon CCFrank and the original work by [Dr. Julian Wichmann](https://de.linkedin.com/in/julianwichmann), this version has been extensively refactored, modernized, and expanded with the complete **Clarivate JCR 2026 Database**, smart multi-tier Q fallbacks, high-speed local dictionary lookup, and unified color synchronization.
 
-I made several changes to the lookup and data storage, since firefox does not allow js files larger than 4MB. More information and the change process can be found in the [notes](./notes.md).
+---
 
-</p> Based on and adapted from CCFrank by WenyanLiu: https://github.com/WenyanLiu/CCFrank4dblp
-</br> Using the public Crossref API: https://api.crossref.org/swagger-ui/index.html
-</br> Using the public dblp API: https://dblp.org/
-</br> Using Australian Business Deans Council (ABDC) list: https://abdc.edu.au/research/abdc-journal-quality-list/
-</br> Using Academic Journal Guide (AJG) by the Chartered Association of Business Schools (C_ABS): https://charteredabs.org/academic-journal-guide-2021/
-</br> Using Bibliometriske Forskningsindikator (BFI) of the Danish Ministry of Higher Education and Science ranking: ufm.dk
-</br> Using Ranking of the Chinese Computer Foundation (CCF): https://www.ccf.org.cn/en/Bulletin/2019-05-13/663884.shtml
-</br> Using CNRS ranking: https://www.gate.cnrs.fr/spip.php?rubrique31&lang=en
-</br> Using Foundation National pour l’Enseignement de la Gestion des Enterprises (FNEGE) ranking: https://www.fnege.org/classement-des-revues-scientifiques-en-sciences-de-gestion/
-</br> Using Financial Times (FT) research rank:
-</br> Using High Council for Evaluation of Research & Higher Education (HCERES) ranking: https://www.hceres.fr/sites/default/files/media/downloads/2020-liste-hceres-domaine-shs1-economie-et-gestion_0.pdf
-</br> Using SCImago Journal & Country Rank (retrieved July 20th, 2022): http://www.scimagojr.com
-</br> Using CORE journal and conference ranking: http://portal.core.edu.au/jnl-ranks/
-</br> Using Financial Time's FT50 ranking: https://www.ft.com/content/3405a512-5cbb-11e1-8f1f-00144feabdc0
-</br> Icons from Flaticon.com: https://www.flaticon.com/free-icons/research
+## Key Features in v1.1
+
+- **2026 Clarivate JCR Impact Factor & Ranking Database Integration**:
+  - Direct integration from `data/2026-newJCRimpactfactor.xlsx` covering **22,643 academic journals** across SCIE, SSCI, AHCI, and ESCI.
+  - Pre-compiled into high-speed in-memory datasets: **39,913 ISSN/eISSN keys** and **70,266 journal title aliases and abbreviations**.
+  - Displays official **2025/2026 JIF scores**, **JIF Quartiles (Q1–Q4)**, **JCI percentiles**, and **full multi-category breakdown** from Column AG JSON in hover tooltips.
+- **Smart Q Ranking Fallback (SJR Scopus & JCR Clarivate)**:
+  - Intelligently checks Scopus SJR Q rating first. If missing, newly renamed, or unranked in Scopus (e.g., *Micro and Nanostructures*, *Advances in Natural Sciences: Nanoscience and Nanotechnology*), it automatically falls back to the official Clarivate JCR Quartile.
+  - Informative tooltips show the exact quartile source: `SJR Quartile: Q... (Scopus)` or `JCR Quartile: Q... (Clarivate Web of Science)`.
+- **Harmonized Color Hierarchy (Zero Discrepancy)**:
+  - Synchronized CSS variables and badge logic so numeric IF thresholds perfectly match Quartile tiers:
+    - **Top Tier / Super Elite (IF >= 10.0)**: Deep Green (`#28a745`)
+    - **Q1 / High Quality (IF >= 5.0)**: Vibrant Green (`#34ce57`)
+    - **Q2 / Very Good (IF 3.0 to < 5.0)**: Clean Yellow (`#ffc107`) — *Both IF 3.0 and IF 3.1 are consistently yellow!*
+    - **Q3 / Moderate (IF 1.5 to < 3.0)**: Warm Orange (`#ff8800`)
+    - **Q4 / Low (IF < 1.5)**: Coral Red (`#dc3545`)
+- **Instant Local Lookups (0ms Latency)**:
+  - Resolves journal rankings instantly from memory without waiting for external API calls, eliminating rate limits and slow load times.
+- **Anti-Spin & Network Timeout Safeguards**:
+  - CrossRef API timeout set to 3.0s and DBLP timeout to 2.5s with guaranteed spinner removal (`ccf-waiting`).
+- **Seamless Infinite Scroll & Dynamic Observation**:
+  - `MutationObserver` on `#gs_res_ccl_mid` plus debounced scroll listeners ensure newly loaded search results receive badges automatically.
+- **Multi-Rank Support**:
+  - Supports JCR, Scopus SJR, CORE (Journals & Conferences), CCF, ABDC, AJG (ABS), FT50, VHB, FNEGE, CoNRS, HCERES, and Danish BFI.
+
+---
 
 ## Preview
 
-Journal rankings are directly added to Google Search results.
-<br />![SJR and VHB Scores](./img/SJR_VHB.PNG)
+Journal rankings and Impact Factors are directly added to Google Scholar search results.
 
-<br /><br />Currently includes a broad range of rankings. Please check the links above for more information on each ranking. The colors also indicate quality from green (higher quality) to red (lower quality).
-![SJR and CCF Scores](./img/SJR_and_CCF.PNG)
+- **Badges**: Displays `[Q1]`, `[Q2]`, `[IF: 3.1]`, `[CORE A*]`, `[CCF A]`, etc.
+- **Hover Tooltip**: Displays detailed metadata including Year, Source, Quartile, H-Index, and category percentiles.
+- **DOI Link**: Clicking rankings navigates directly to the publication via its DOI.
 
-<br /><br />Hovering with your cursor over the ranking scores gives you additional information such as the journals h-index and the name of the journal that was identified based on the input from Google Scholar.
-![SJR and VHB Scores with mouseover info](./img/SJR_VHB_with%20mouseover.PNG)
+---
 
-<br /><br />Clicking on the ranking scores takes you to the identified work via its DOI. This along with the identified journal name helps you to check, whether indeed the correct journal was identified based on the Google Scholar input.
-![Link to DOI](./img/doi_link.PNG)
+## Installation Guide
 
+### Google Chrome (Recommended)
+1. Clone or download this repository to your local computer.
+2. Open Google Chrome and navigate to `chrome://extensions/`.
+3. Enable **Developer mode** toggle in the top-right corner.
+4. Click **Load unpacked** and select the extension folder:
+   - `JQR-Scholar-Extension`
+5. Visit [Google Scholar](https://scholar.google.com) and search for any topic or author to see instant journal rankings and Impact Factors!
 
-## Install
+### Mozilla Firefox
+1. Open Firefox and go to `about:debugging#/runtime/this-firefox`.
+2. Click **Load Temporary Add-on...**.
+3. Select the `manifest.json` file inside the extension folder.
 
-<b> Coming soon </b> <br/>
-<b> Workaround </b> <br/>
-First ensure that the whole repository exists on your local machine.
-You can temporarily install the addon under Firefox by visiting about:debugging#/runtime/this-firefox in your browser and clicking on "Load Temporary Add-on...".
-![Temporary Addon](./img/temporary_install.png)
+---
 
-<br /><br />Next you have to navigate to the folder where you installed the repo to and select the "manifest.json" file.
-![Adding Manifest](./img/add_manifest.png)
+## Automated Verification
 
-<br /><br />Finally, in the top right corner you can navigate to the addon settings and set the permissions for the google scholar sites you're using (e.g. https://scholar.google.ch).
+The repository includes a comprehensive 8-suite self-test suite covering:
+1. Syntax check across all JavaScript files
+2. In-memory data loading (39,913 ISSN keys & 70,266 Name keys)
+3. Google Scholar `div.gs_a` text parsing (author vs venue separation)
+4. Dual ISSN/eISSN and multi-category Column AG JSON extraction
+5. Tooltip & badge HTML generation
+6. Network timeouts and guaranteed spinner cleanup
+7. Infinite scroll and `MutationObserver` deduplication
+8. Specific edge cases (*Micro and Nanostructures*, *Advances in Natural Sciences*, color harmonization)
 
-![Add permissions](./img/manage_addon.png)
+Run the test suite at any time:
+```bash
+node test_jqr_extension.js
+```
 
-## What's New
+---
 
+## Ranking Sources & References
 
-## Contributors ✨
+- **Clarivate Journal Citation Reports (JCR 2025/2026)**: Web of Science Group
+- **SCImago Journal & Country Rank (SJR)**: http://www.scimagojr.com
+- **Crossref Public API**: https://api.crossref.org/
+- **DBLP Computer Science Bibliography**: https://dblp.org/
+- **Australian Business Deans Council (ABDC)**: https://abdc.edu.au/
+- **Chartered Association of Business Schools (AJG/ABS)**: https://charteredabs.org/
+- **China Computer Federation (CCF)**: https://www.ccf.org.cn/
+- **Computing Research & Education Association of Australasia (CORE)**: http://portal.core.edu.au/
+- **Financial Times Research Rank (FT50)**: https://www.ft.com/
 
-This package is based on the Chrome extension by Dr. Julian R. K. Wichmann and in turn on CCFrank by WenyanLiu: https://github.com/WenyanLiu/CCFrank4dblp
-Thanks goes to them and their contributors: https://github.com/WenyanLiu/CCFrank4dblp#contributors-
+---
 
-</p> Using the public Crossref API: https://api.crossref.org/swagger-ui/index.html
-</p> Using SCImago Journal & Country Rank (retrieved July 20th, 2022): http://www.scimagojr.com
-</br> Using VHB-JOURQUAL3 ranking: https://vhbonline.org/en/vhb4you/vhb-jourqual/vhb-jourqual-3
-</p> Using China Computer Federation (CCF) ranking: https://www.ccf.org.cn/en/Bulletin/2019-05-13/663884.shtml
-</p> Icons from Flaticon.com: https://www.flaticon.com/free-icons/research
+## License & Credits
 
-Contributions of any kind welcome!
-
-## Reports
+- MIT License
+- Based on CCFrank by WenyanLiu (https://github.com/WenyanLiu/CCFrank4dblp) and CCFrank4Scholar by Julian R. K. Wichmann.
+- Maintained & upgraded by Trung V.M Nguyen.
